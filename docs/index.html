@@ -1,405 +1,533 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="TypoMaster — Professional bilingual typing trainer built with React 19 + Tauri 2 + Rust. Master Arabic & English typing with 210+ exercises, 40 lessons, 5 games.">
-  <meta name="keywords" content="typing tutor, typing master, Arabic typing, English typing, touch typing, Tauri app, desktop application, React typing app, keyboard trainer">
-  <meta property="og:title" content="TypoMaster — Master Your Typing">
-  <meta property="og:description" content="Professional bilingual typing trainer. React 19 + Tauri 2 + Rust + SQLite. 210+ exercises, 40 lessons, 5 games.">
+  <meta name="description" content="TypoMaster — برنامج احترافي لتعليم الطباعة بالعربية والإنجليزية. تطبيق سطح مكتب بتقنية Tauri + React مع 210+ تمرين و 40 درس و 5 ألعاب تفاعلية.">
+  <meta name="keywords" content="تعليم الطباعة, طباعة عربي, typing tutor, touch typing, Tauri, desktop app">
+  <meta property="og:title" content="TypoMaster — أتقن الطباعة">
+  <meta property="og:description" content="Professional bilingual typing trainer. React + Tauri + Rust + SQLite.">
   <meta property="og:image" content="https://raw.githubusercontent.com/alhmli70/typomaster/main/banner.svg">
   <meta property="og:url" content="https://alhmli70.github.io/typomaster">
   <meta name="twitter:card" content="summary_large_image">
-  <title>TypoMaster — Master Your Typing</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='96' fill='%23FFC800'/><text x='256' y='320' font-family='Arial' font-size='320' font-weight='900' text-anchor='middle' fill='%230F111A'>T</text></svg>">
+  <title>TypoMaster — أتقن الطباعة</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='96' fill='%23FFC800'/><text x='256' y='320' font-family='Arial' font-size='320' font-weight='900' text-anchor='middle' fill='%230F111A'>T</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #0A0E1A;
-      color: #E8EDF5;
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
-    a { color: #4F8CFF; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-
-    /* Hero */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 2rem;
-      position: relative;
-      background: radial-gradient(ellipse at 50% 0%, rgba(79,140,255,0.08) 0%, transparent 60%),
-                  radial-gradient(ellipse at 80% 80%, rgba(124,92,252,0.06) 0%, transparent 50%);
-    }
-    .hero-logo {
-      width: 80px; height: 80px;
-      background: linear-gradient(135deg, #4F8CFF, #7C5CFC);
-      border-radius: 18px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 42px; font-weight: 900; color: #fff;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 0 40px rgba(79,140,255,0.3);
-    }
-    .hero h1 {
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
-      font-weight: 900;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #E8EDF5 0%, #4F8CFF 50%, #7C5CFC 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 0.5rem;
-    }
-    .hero h1 span { -webkit-text-fill-color: transparent; }
-    .hero p {
-      font-size: clamp(1rem, 2vw, 1.25rem);
-      color: #8892B0;
-      max-width: 640px;
-      margin-bottom: 2rem;
-    }
-    .hero-sub {
-      font-size: 0.95rem;
-      color: #5B6A8A;
-      letter-spacing: 0.1em;
-      margin-bottom: 0.25rem;
-      text-transform: uppercase;
-    }
-    .hero-badges {
-      display: flex; flex-wrap: wrap; gap: 0.5rem;
-      justify-content: center; margin-bottom: 2.5rem;
-    }
-    .hero-badges span {
-      padding: 0.35rem 0.9rem;
-      border-radius: 100px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      background: rgba(26,33,64,0.8);
-      border: 1px solid rgba(79,140,255,0.15);
-      color: #8892B0;
-    }
-    .hero-badges span.highlight { color: #4F8CFF; border-color: rgba(79,140,255,0.3); }
-    .btn-group { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
-    .btn {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      padding: 0.75rem 1.75rem;
-      border-radius: 10px;
-      font-size: 0.95rem; font-weight: 600;
-      transition: all 0.2s;
-      border: none; cursor: pointer;
-    }
-    .btn-primary {
-      background: linear-gradient(135deg, #4F8CFF, #7C5CFC);
-      color: #fff;
-      box-shadow: 0 4px 20px rgba(79,140,255,0.25);
-    }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 30px rgba(79,140,255,0.35); }
-    .btn-secondary {
-      background: rgba(26,33,64,0.8);
-      color: #E8EDF5;
-      border: 1px solid rgba(79,140,255,0.15);
-    }
-    .btn-secondary:hover { background: rgba(26,33,64,1); border-color: rgba(79,140,255,0.3); transform: translateY(-2px); }
-    .btn-ghost {
-      background: transparent;
-      color: #8892B0;
-      border: 1px solid rgba(136,146,176,0.2);
-    }
-    .btn-ghost:hover { color: #E8EDF5; border-color: rgba(136,146,176,0.4); }
-
-    /* Screenshots */
-    .screenshots {
-      padding: 5rem 2rem;
-      background: #0D1225;
-    }
-    .screenshots h2 {
-      text-align: center;
-      font-size: 2rem;
-      font-weight: 800;
-      margin-bottom: 0.5rem;
-    }
-    .screenshots .subtitle {
-      text-align: center;
-      color: #8892B0;
-      margin-bottom: 3rem;
-    }
-    .screenshot-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 1.5rem;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    .screenshot-card {
-      background: rgba(26,33,64,0.6);
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid rgba(79,140,255,0.08);
-      transition: all 0.3s;
-    }
-    .screenshot-card:hover { border-color: rgba(79,140,255,0.2); transform: translateY(-4px); }
-    .screenshot-card img {
-      width: 100%;
-      display: block;
-    }
-    .screenshot-card .label {
-      padding: 0.75rem 1rem;
-      font-size: 0.85rem;
-      color: #8892B0;
-      font-weight: 500;
-    }
-
-    /* Features */
-    .features {
-      padding: 5rem 2rem;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    .features h2 {
-      text-align: center;
-      font-size: 2rem;
-      font-weight: 800;
-      margin-bottom: 3rem;
-    }
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.5rem;
-    }
-    .feature-card {
-      background: rgba(26,33,64,0.6);
-      border-radius: 12px;
-      padding: 1.5rem;
-      border: 1px solid rgba(79,140,255,0.08);
-      transition: all 0.3s;
-      text-align: center;
-    }
-    .feature-card:hover { border-color: rgba(79,140,255,0.2); transform: translateY(-4px); }
-    .feature-card .icon { font-size: 2rem; margin-bottom: 0.75rem; }
-    .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .feature-card p { font-size: 0.85rem; color: #8892B0; }
-
-    /* Stats */
-    .stats {
-      padding: 4rem 2rem;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1.5rem;
-    }
-    .stat-card {
-      background: rgba(26,33,64,0.6);
-      border-radius: 12px;
-      padding: 2rem 1rem;
-      text-align: center;
-      border: 1px solid rgba(79,140,255,0.08);
-    }
-    .stat-card .number {
-      font-size: 2.5rem;
-      font-weight: 900;
-      background: linear-gradient(135deg, #4F8CFF, #7C5CFC);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .stat-card .label { font-size: 0.8rem; color: #8892B0; margin-top: 0.25rem; letter-spacing: 0.05em; }
-
-    /* GitHub CTA */
-    .github-cta {
-      text-align: center;
-      padding: 5rem 2rem;
-      background: radial-gradient(ellipse at 50% 100%, rgba(79,140,255,0.06) 0%, transparent 60%);
-    }
-    .github-cta h2 { font-size: 1.75rem; font-weight: 800; margin-bottom: 1rem; }
-    .github-cta p { color: #8892B0; margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto; }
-
-    /* Footer */
-    footer {
-      text-align: center;
-      padding: 2rem;
-      color: #5B6A8A;
-      font-size: 0.85rem;
-      border-top: 1px solid rgba(79,140,255,0.06);
-    }
-    footer a { color: #8892B0; }
-    footer a:hover { color: #4F8CFF; }
-
-    @media (max-width: 640px) {
-      .hero { padding: 4rem 1.5rem; }
-      .screenshot-grid { grid-template-columns: 1fr; }
-      .features-grid { grid-template-columns: 1fr 1fr; }
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/ScrollTrigger.min.js" defer></script>
 </head>
-<body>
+<body class="bg-[#0F111A] text-white font-['Cairo'] overflow-x-hidden">
 
-<section class="hero">
-  <div class="hero-logo">T</div>
-  <p class="hero-sub">Built with React 19 • Tauri 2 • Rust • SQLite</p>
-  <h1>TypoMaster</h1>
-  <p>Professional bilingual typing trainer — Master Arabic &amp; English typing with interactive lessons, games, and real-time analytics.</p>
-  <div class="hero-badges">
-    <span class="highlight">⌨️ 210+ Exercises</span>
-    <span class="highlight">📚 40 Lessons</span>
-    <span>🎮 5 Games</span>
-    <span>🎨 10 Themes</span>
-    <span>📊 Analytics</span>
-    <span>🤖 AI Tips</span>
-    <span>💽 SQLite</span>
-  </div>
-  <div class="btn-group">
-    <a href="https://github.com/alhmli70/typomaster/releases" class="btn btn-primary">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Download
-    </a>
-    <a href="https://github.com/alhmli70/typomaster" class="btn btn-secondary">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-      Source Code
-    </a>
-    <a href="#screenshots" class="btn btn-ghost">Screenshots ↓</a>
-  </div>
-</section>
+  <!-- ===== CURSOR GLOW ===== -->
+  <div id="cursor-glow" class="fixed pointer-events-none z-50 w-[600px] h-[600px] rounded-full opacity-[0.04] transition-all duration-500" style="background: radial-gradient(circle, #FFC800 0%, transparent 70%);"></div>
 
-<section class="screenshots" id="screenshots">
-  <h2>Screenshots</h2>
-  <p class="subtitle">A glimpse into the TypoMaster experience</p>
-  <div class="screenshot-grid">
-    <div class="screenshot-card">
-      <img src="../img/dashboard.png" alt="Dashboard" loading="lazy">
-      <div class="label">📊 Dashboard</div>
+  <!-- ===== NAVBAR ===== -->
+  <nav class="fixed top-0 inset-x-0 z-40 backdrop-blur-xl border-b border-white/[0.04] transition-all duration-300" id="navbar">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-3 group">
+        <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#FFC800] to-[#FFA000] flex items-center justify-center text-[#0F111A] font-black text-lg shadow-lg shadow-[#FFC800]/20 group-hover:shadow-[#FFC800]/40 transition-shadow">T</span>
+        <span class="font-bold text-lg tracking-tight">Typo<span class="text-[#FFC800]">Master</span></span>
+      </a>
+      <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+        <a href="#features" class="text-white/60 hover:text-white transition-colors">الميزات</a>
+        <a href="#screenshots" class="text-white/60 hover:text-white transition-colors">لقطات</a>
+        <a href="#games" class="text-white/60 hover:text-white transition-colors">الألعاب</a>
+        <a href="#stats" class="text-white/60 hover:text-white transition-colors">إحصائيات</a>
+        <a href="https://github.com/alhmli70/typomaster/releases" class="relative group">
+          <span class="px-5 py-2 rounded-lg bg-gradient-to-r from-[#FFC800] to-[#FFA000] text-[#0F111A] font-bold text-sm shadow-lg shadow-[#FFC800]/25 hover:shadow-[#FFC800]/40 transition-all hover:translate-y-[-1px] inline-block">تحميل</span>
+        </a>
+      </div>
     </div>
-    <div class="screenshot-card">
-      <img src="../img/lessons.png" alt="Lessons" loading="lazy">
-      <div class="label">📚 Lessons</div>
-    </div>
-    <div class="screenshot-card">
-      <img src="../img/exercises.png" alt="Exercises" loading="lazy">
-      <div class="label">⌨️ Exercises</div>
-    </div>
-    <div class="screenshot-card">
-      <img src="../img/games.png" alt="Games" loading="lazy">
-      <div class="label">🎮 Games</div>
-    </div>
-    <div class="screenshot-card">
-      <img src="../img/profile.png" alt="Profile" loading="lazy">
-      <div class="label">🏆 Profile</div>
-    </div>
-    <div class="screenshot-card">
-      <img src="../img/settings.png" alt="Settings" loading="lazy">
-      <div class="label">⚙️ Settings</div>
-    </div>
-  </div>
-</section>
+  </nav>
 
-<section class="features">
-  <h2>Features</h2>
-  <div class="features-grid">
-    <div class="feature-card">
-      <div class="icon">📚</div>
-      <h3>40 Lessons</h3>
-      <p>20 Arabic + 20 English — from home row to speed mastery</p>
+  <!-- ===== HERO ===== -->
+  <section class="relative min-h-screen flex items-center justify-center px-6 pt-16 overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none">
+      <div class="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-[#FFC800] opacity-[0.02] blur-[100px]"></div>
+      <div class="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-[#FFA000] opacity-[0.015] blur-[100px]"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-[#FFC800] opacity-[0.01] blur-[120px]"></div>
     </div>
-    <div class="feature-card">
-      <div class="icon">⌨️</div>
-      <h3>210+ Exercises</h3>
-      <p>10 collections, 3 difficulty levels, progressive learning</p>
+    <div class="relative max-w-5xl mx-auto text-center">
+      <div class="mb-6 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FFC800]/[0.06] border border-[#FFC800]/[0.12] text-[#FFC800] text-xs font-semibold tracking-wider opacity-0" id="hero-badge">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#FFC800] animate-pulse"></span>
+        الإصدار 1.0.0 — جاهز للتثبيت
+      </div>
+      <h1 class="text-5xl md:text-7xl lg:text-8xl font-black leading-[1.1] mb-6 opacity-0" id="hero-title">
+        أتقن
+        <span class="bg-gradient-to-r from-[#FFC800] via-[#FFB300] to-[#FFA000] bg-clip-text text-transparent">الطباعة</span>
+        <br>
+        <span class="text-3xl md:text-4xl lg:text-5xl font-light text-white/40 tracking-wide">Master Your Typing</span>
+      </h1>
+      <p class="text-white/40 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed opacity-0" id="hero-desc">
+        تطوير مهارات الطباعة بالعربية والإنجليزية مع <strong class="text-white/70">210+ تمرين</strong>،
+        <strong class="text-white/70">40 درس</strong>، <strong class="text-white/70">5 ألعاب تفاعلية</strong>،
+        وتحليلات أداء متقدمة — كل هذا في تطبيق سطح مكتب أنيق وسريع.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4 opacity-0" id="hero-cta">
+        <a href="https://github.com/alhmli70/typomaster/releases" class="group relative px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#FFC800] to-[#FFA000] text-[#0F111A] font-bold text-base shadow-2xl shadow-[#FFC800]/25 hover:shadow-[#FFC800]/40 transition-all hover:translate-y-[-2px]">
+          <span class="relative z-10 flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            تحميل التطبيق
+          </span>
+        </a>
+        <a href="https://github.com/alhmli70/typomaster" class="px-8 py-3.5 rounded-xl border border-white/[0.1] bg-white/[0.03] text-white/80 font-semibold text-base hover:bg-white/[0.06] hover:text-white transition-all">
+          <span class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+            كود المصدر
+          </span>
+        </a>
+      </div>
+      <div class="mt-16 opacity-0" id="hero-tech">
+        <div class="flex flex-wrap justify-center gap-3 text-xs font-mono">
+          <span class="px-3 py-1.5 rounded-md bg-white/[0.03] border border-white/[0.06] text-white/30">React 19</span>
+          <span class="px-3 py-1.5 rounded-md bg-white/[0.03] border border-white/[0.06] text-white/30">TypeScript</span>
+          <span class="px-3 py-1.5 rounded-md bg-white/[0.03] border border-white/[0.06] text-white/30">Tauri 2</span>
+          <span class="px-3 py-1.5 rounded-md bg-white/[0.03] border border-white/[0.06] text-white/30">Rust</span>
+          <span class="px-3 py-1.5 rounded-md bg-white/[0.03] border border-white/[0.06] text-white/30">SQLite</span>
+          <span class="px-3 py-1.5 rounded-md bg-white/[0.03] border border-white/[0.06] text-white/30">Tailwind CSS</span>
+        </div>
+      </div>
     </div>
-    <div class="feature-card">
-      <div class="icon">🎮</div>
-      <h3>5 Interactive Games</h3>
-      <p>Falling Words, Typer Shooter, Ninja Typer, Memory, Speed Race</p>
+    <div class="absolute bottom-8 inset-x-0 flex justify-center animate-bounce opacity-30">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
     </div>
-    <div class="feature-card">
-      <div class="icon">🎨</div>
-      <h3>10 Themes</h3>
-      <p>5 dark + 5 light premium themes with accent colors</p>
-    </div>
-    <div class="feature-card">
-      <div class="icon">📊</div>
-      <h3>Real-time Analytics</h3>
-      <p>WPM, accuracy, weekly charts, streaks, XP system</p>
-    </div>
-    <div class="feature-card">
-      <div class="icon">🏆</div>
-      <h3>Achievements</h3>
-      <p>10+ achievements, XP levels, badges to unlock</p>
-    </div>
-    <div class="feature-card">
-      <div class="icon">🎵</div>
-      <h3>Background Music</h3>
-      <p>10 MP3 tracks with full volume control</p>
-    </div>
-    <div class="feature-card">
-      <div class="icon">💽</div>
-      <h3>SQLite Database</h3>
-      <p>Persistent local storage — no data loss ever</p>
-    </div>
-  </div>
-</section>
+  </section>
 
-<section class="stats">
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="number">15K+</div>
-      <div class="label">Lines of Code</div>
+  <!-- ===== FEATURES ===== -->
+  <section id="features" class="relative py-24 md:py-32 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16 md:mb-20 opacity-0" id="features-header">
+        <span class="text-[#FFC800]/60 text-sm font-semibold tracking-widest uppercase">Features</span>
+        <h2 class="text-3xl md:text-5xl font-black mt-3">ميزات احترافية</h2>
+        <p class="text-white/30 text-lg mt-3 max-w-xl mx-auto">كل ما تحتاجه لتصبح محترفاً في الطباعة</p>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5" id="features-grid">
+        <div class="feature-card group relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-[#FFC800]/[0.15] transition-all duration-500 cursor-default">
+          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative">
+            <span class="text-3xl">📚</span>
+            <h3 class="text-lg font-bold mt-4 mb-2">40 درساً نظرياً</h3>
+            <p class="text-white/40 text-sm leading-relaxed">20 عربي + 20 إنجليزي — من المفاتيح الرئيسية إلى السرعة. تغطية شاملة لجميع المستويات.</p>
+          </div>
+        </div>
+        <div class="feature-card group relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-[#FFC800]/[0.15] transition-all duration-500 cursor-default">
+          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative">
+            <span class="text-3xl">⌨️</span>
+            <h3 class="text-lg font-bold mt-4 mb-2">210+ تمرين عملي</h3>
+            <p class="text-white/40 text-sm leading-relaxed">10 مجموعات، 3 مستويات صعوبة، تمارين تصاعدية تغطي كل جوانب الطباعة.</p>
+          </div>
+        </div>
+        <div class="feature-card group relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-[#FFC800]/[0.15] transition-all duration-500 cursor-default">
+          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative">
+            <span class="text-3xl">🎮</span>
+            <h3 class="text-lg font-bold mt-4 mb-2">5 ألعاب تفاعلية</h3>
+            <p class="text-white/40 text-sm leading-relaxed">الكلمات المتساقطة، قناص، نينجا الحروف، ذاكرة الطباعة، سباق السرعة — تعلم ممتع.</p>
+          </div>
+        </div>
+        <div class="feature-card group relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-[#FFC800]/[0.15] transition-all duration-500 cursor-default">
+          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative">
+            <span class="text-3xl">📊</span>
+            <h3 class="text-lg font-bold mt-4 mb-2">إحصائيات متقدمة</h3>
+            <p class="text-white/40 text-sm leading-relaxed">WPM، الدقة، الأخطاء، رسوم بيانية أسبوعية، Streak الأيام — تتبع كل شيء.</p>
+          </div>
+        </div>
+        <div class="feature-card group relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-[#FFC800]/[0.15] transition-all duration-500 cursor-default">
+          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative">
+            <span class="text-3xl">🏆</span>
+            <h3 class="text-lg font-bold mt-4 mb-2">10+ إنجازات</h3>
+            <p class="text-white/40 text-sm leading-relaxed">نظام XP، مستويات، شارات إنجاز — كل جلسة تقربك من الإنجاز التالي.</p>
+          </div>
+        </div>
+        <div class="feature-card group relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-[#FFC800]/[0.15] transition-all duration-500 cursor-default">
+          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative">
+            <span class="text-3xl">🎨</span>
+            <h3 class="text-lg font-bold mt-4 mb-2">10 ثيمات احترافية</h3>
+            <p class="text-white/40 text-sm leading-relaxed">5 غامقة + 5 فاتحة بتصميم بيج فاخر — ألوان أكسنت مميزة لكل ذوق.</p>
+          </div>
+        </div>
+        <div class="feature-card group relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-[#FFC800]/[0.15] transition-all duration-500 cursor-default">
+          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative">
+            <span class="text-3xl">🤖</span>
+            <h3 class="text-lg font-bold mt-4 mb-2">نصائح ذكية</h3>
+            <p class="text-white/40 text-sm leading-relaxed">مدمجة بدون إنترنت — مخصصة لكل درس وتمرين. لا حاجة لاتصال دائم.</p>
+          </div>
+        </div>
+        <div class="feature-card group relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-[#FFC800]/[0.15] transition-all duration-500 cursor-default">
+          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative">
+            <span class="text-3xl">💽</span>
+            <h3 class="text-lg font-bold mt-4 mb-2">SQLite مدمجة</h3>
+            <p class="text-white/40 text-sm leading-relaxed">قاعدة بيانات محلية دائمة — لا فقدان للبيانات. كل تقدمك محفوظ.</p>
+          </div>
+        </div>
+        <div class="feature-card group relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-[#FFC800]/[0.15] transition-all duration-500 cursor-default">
+          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative">
+            <span class="text-3xl">🌙</span>
+            <h3 class="text-lg font-bold mt-4 mb-2">وضع مظلم / فاتح</h3>
+            <p class="text-white/40 text-sm leading-relaxed">تبديل فوري بين 5 ثيمات غامقة و 5 فاتحة — يناسب كل الأوقات.</p>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="stat-card">
-      <div class="number">210+</div>
-      <div class="label">Exercises</div>
-    </div>
-    <div class="stat-card">
-      <div class="number">40</div>
-      <div class="label">Lessons</div>
-    </div>
-    <div class="stat-card">
-      <div class="number">5</div>
-      <div class="label">Games</div>
-    </div>
-  </div>
-</section>
+  </section>
 
-<section class="github-cta">
-  <h2>⭐ Star on GitHub</h2>
-  <p>If you find TypoMaster useful, give it a star to help others discover it!</p>
-  <div class="btn-group">
-    <a href="https://github.com/alhmli70/typomaster" class="btn btn-primary">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/></svg>
-      Star on GitHub
-    </a>
-    <a href="https://github.com/alhmli70/typomaster/releases" class="btn btn-secondary">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Download Latest
-    </a>
-  </div>
-</section>
+  <!-- ===== SCREENSHOTS GALLERY ===== -->
+  <section id="screenshots" class="relative py-24 md:py-32 px-6 bg-[#0D0F17]">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16 md:mb-20 opacity-0" id="screenshots-header">
+        <span class="text-[#FFC800]/60 text-sm font-semibold tracking-widest uppercase">Gallery</span>
+        <h2 class="text-3xl md:text-5xl font-black mt-3">لقطات الشاشة</h2>
+        <p class="text-white/30 text-lg mt-3 max-w-xl mx-auto">تصميم عصري ونظيف يعكس جودة التطبيق</p>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="screenshots-grid">
+        <div class="screenshot-card group relative rounded-2xl overflow-hidden border border-white/[0.06] bg-white/[0.02] transition-all duration-500 hover:border-[#FFC800]/[0.2] hover:shadow-2xl hover:shadow-[#FFC800]/[0.05]">
+          <div class="aspect-[4/3] overflow-hidden">
+            <img src="../img/dashboard.png" alt="Dashboard" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+          </div>
+          <div class="p-4 flex items-center justify-between">
+            <span class="text-sm font-semibold text-white/80">📊 لوحة التحكم</span>
+            <span class="text-xs text-white/20 font-mono">Dashboard</span>
+          </div>
+        </div>
+        <div class="screenshot-card group relative rounded-2xl overflow-hidden border border-white/[0.06] bg-white/[0.02] transition-all duration-500 hover:border-[#FFC800]/[0.2] hover:shadow-2xl hover:shadow-[#FFC800]/[0.05]">
+          <div class="aspect-[4/3] overflow-hidden">
+            <img src="../img/lessons.png" alt="Lessons" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+          </div>
+          <div class="p-4 flex items-center justify-between">
+            <span class="text-sm font-semibold text-white/80">📚 الدروس النظرية</span>
+            <span class="text-xs text-white/20 font-mono">Lessons</span>
+          </div>
+        </div>
+        <div class="screenshot-card group relative rounded-2xl overflow-hidden border border-white/[0.06] bg-white/[0.02] transition-all duration-500 hover:border-[#FFC800]/[0.2] hover:shadow-2xl hover:shadow-[#FFC800]/[0.05]">
+          <div class="aspect-[4/3] overflow-hidden">
+            <img src="../img/exercises.png" alt="Exercises" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+          </div>
+          <div class="p-4 flex items-center justify-between">
+            <span class="text-sm font-semibold text-white/80">⌨️ اختيار التمارين</span>
+            <span class="text-xs text-white/20 font-mono">Exercises</span>
+          </div>
+        </div>
+        <div class="screenshot-card group relative rounded-2xl overflow-hidden border border-white/[0.06] bg-white/[0.02] transition-all duration-500 hover:border-[#FFC800]/[0.2] hover:shadow-2xl hover:shadow-[#FFC800]/[0.05]">
+          <div class="aspect-[4/3] overflow-hidden">
+            <img src="../img/games.png" alt="Games" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+          </div>
+          <div class="p-4 flex items-center justify-between">
+            <span class="text-sm font-semibold text-white/80">🎮 الألعاب التفاعلية</span>
+            <span class="text-xs text-white/20 font-mono">Games</span>
+          </div>
+        </div>
+        <div class="screenshot-card group relative rounded-2xl overflow-hidden border border-white/[0.06] bg-white/[0.02] transition-all duration-500 hover:border-[#FFC800]/[0.2] hover:shadow-2xl hover:shadow-[#FFC800]/[0.05]">
+          <div class="aspect-[4/3] overflow-hidden">
+            <img src="../img/profile.png" alt="Profile" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+          </div>
+          <div class="p-4 flex items-center justify-between">
+            <span class="text-sm font-semibold text-white/80">🏆 الملف الشخصي</span>
+            <span class="text-xs text-white/20 font-mono">Profile</span>
+          </div>
+        </div>
+        <div class="screenshot-card group relative rounded-2xl overflow-hidden border border-white/[0.06] bg-white/[0.02] transition-all duration-500 hover:border-[#FFC800]/[0.2] hover:shadow-2xl hover:shadow-[#FFC800]/[0.05]">
+          <div class="aspect-[4/3] overflow-hidden">
+            <img src="../img/settings.png" alt="Settings" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+          </div>
+          <div class="p-4 flex items-center justify-between">
+            <span class="text-sm font-semibold text-white/80">⚙️ الإعدادات</span>
+            <span class="text-xs text-white/20 font-mono">Settings</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<footer>
-  <p>
-    Built with ❤️ using
-    <a href="https://tauri.app">Tauri</a> +
-    <a href="https://react.dev">React</a> +
-    <a href="https://www.rust-lang.org">Rust</a> +
-    <a href="https://sqlite.org">SQLite</a>
-  </p>
-  <p style="margin-top: 0.5rem;">
-    <a href="https://github.com/alhmli70/typomaster">GitHub</a> •
-    <a href="https://github.com/alhmli70/typomaster/releases">Releases</a> •
-    <a href="https://github.com/alhmli70/typomaster/blob/main/LICENSE">MIT License</a>
-  </p>
-</footer>
+  <!-- ===== GAMES ===== -->
+  <section id="games" class="relative py-24 md:py-32 px-6 overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none">
+      <div class="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-[#FFC800] opacity-[0.015] blur-[100px]"></div>
+    </div>
+    <div class="max-w-7xl mx-auto relative">
+      <div class="text-center mb-16 md:mb-20 opacity-0" id="games-header">
+        <span class="text-[#FFC800]/60 text-sm font-semibold tracking-widest uppercase">Games</span>
+        <h2 class="text-3xl md:text-5xl font-black mt-3">ألعاب تفاعلية</h2>
+        <p class="text-white/30 text-lg mt-3 max-w-xl mx-auto">تعلّم بدون ملل — 5 ألعاب مصممة لتحسين سرعتك ودقتك</p>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5" id="games-grid">
+        <div class="game-card group relative p-6 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.04] to-transparent border border-[#FFC800]/[0.08] hover:border-[#FFC800]/[0.2] transition-all duration-500 cursor-default">
+          <div class="text-4xl mb-4">🌊</div>
+          <h3 class="text-lg font-bold mb-2">الكلمات المتساقطة</h3>
+          <p class="text-white/40 text-sm leading-relaxed">كلمات تسقط من الأعلى — اكتبها قبل أن تصل للأرض. تدريب على السرعة ورد الفعل.</p>
+        </div>
+        <div class="game-card group relative p-6 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.04] to-transparent border border-[#FFC800]/[0.08] hover:border-[#FFC800]/[0.2] transition-all duration-500 cursor-default">
+          <div class="text-4xl mb-4">🎯</div>
+          <h3 class="text-lg font-bold mb-2">قناص مسافة</h3>
+          <p class="text-white/40 text-sm leading-relaxed">كلمات تظهر عشوائياً — أصبها قبل اختفائها. دقة وتركيز في كل طلقة.</p>
+        </div>
+        <div class="game-card group relative p-6 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.04] to-transparent border border-[#FFC800]/[0.08] hover:border-[#FFC800]/[0.2] transition-all duration-500 cursor-default">
+          <div class="text-4xl mb-4">🥷</div>
+          <h3 class="text-lg font-bold mb-2">نينجا الحروف</h3>
+          <p class="text-white/40 text-sm leading-relaxed">الحروف تقفز وتختفي — اكتبها في الوقت المحدد. سرعة رد فعل قصوى.</p>
+        </div>
+        <div class="game-card group relative p-6 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.04] to-transparent border border-[#FFC800]/[0.08] hover:border-[#FFC800]/[0.2] transition-all duration-500 cursor-default">
+          <div class="text-4xl mb-4">🧠</div>
+          <h3 class="text-lg font-bold mb-2">ذاكرة الطباعة</h3>
+          <p class="text-white/40 text-sm leading-relaxed">الكلمة تظهر ثم تختفي — اكتبها من الذاكرة. تقوية الذاكرة العضلية.</p>
+        </div>
+        <div class="game-card group relative p-6 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.04] to-transparent border border-[#FFC800]/[0.08] hover:border-[#FFC800]/[0.2] transition-all duration-500 cursor-default lg:col-span-1 md:col-span-2 md:max-w-[50%] md:mx-auto lg:max-w-none lg:col-span-1 lg:mx-0">
+          <div class="text-4xl mb-4">🏎️</div>
+          <h3 class="text-lg font-bold mb-2">سباق السرعة</h3>
+          <p class="text-white/40 text-sm leading-relaxed">سباق مع الزمن — أكتب أكبر عدد من الكلمات الصحيحة. تحمل وسرعة في آن واحد.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <!-- ===== STATS ===== -->
+  <section id="stats" class="relative py-24 md:py-32 px-6 bg-[#0D0F17]">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16 md:mb-20 opacity-0" id="stats-header">
+        <span class="text-[#FFC800]/60 text-sm font-semibold tracking-widest uppercase">By the Numbers</span>
+        <h2 class="text-3xl md:text-5xl font-black mt-3">إحصائيات المشروع</h2>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6" id="stats-grid">
+        <div class="stat-card relative p-8 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-center" data-target="15">
+          <div class="text-4xl md:text-5xl font-black bg-gradient-to-b from-[#FFC800] to-[#FFA000] bg-clip-text text-transparent"><span class="counter" data-target="15">0</span>K+</div>
+          <div class="text-white/40 text-sm mt-2 font-semibold">سطر كود</div>
+        </div>
+        <div class="stat-card relative p-8 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-center" data-target="210">
+          <div class="text-4xl md:text-5xl font-black bg-gradient-to-b from-[#FFC800] to-[#FFA000] bg-clip-text text-transparent"><span class="counter" data-target="210">0</span>+</div>
+          <div class="text-white/40 text-sm mt-2 font-semibold">تمرين عملي</div>
+        </div>
+        <div class="stat-card relative p-8 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-center" data-target="40">
+          <div class="text-4xl md:text-5xl font-black bg-gradient-to-b from-[#FFC800] to-[#FFA000] bg-clip-text text-transparent"><span class="counter" data-target="40">0</span></div>
+          <div class="text-white/40 text-sm mt-2 font-semibold">درس نظري</div>
+        </div>
+        <div class="stat-card relative p-8 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-center" data-target="5">
+          <div class="text-4xl md:text-5xl font-black bg-gradient-to-b from-[#FFC800] to-[#FFA000] bg-clip-text text-transparent"><span class="counter" data-target="5">0</span></div>
+          <div class="text-white/40 text-sm mt-2 font-semibold">ألعاب تفاعلية</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ARCHITECTURE ===== -->
+  <section class="relative py-24 md:py-32 px-6 overflow-hidden">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16 opacity-0" id="arch-header">
+        <span class="text-[#FFC800]/60 text-sm font-semibold tracking-widest uppercase">Architecture</span>
+        <h2 class="text-3xl md:text-5xl font-black mt-3">الهندسة التقنية</h2>
+      </div>
+      <div class="flex flex-wrap justify-center gap-6 opacity-0" id="arch-content">
+        <div class="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-center min-w-[140px]">
+          <div class="text-2xl mb-2">⚛️</div>
+          <div class="font-bold text-sm">React 19</div>
+          <div class="text-white/30 text-xs mt-1 font-mono">Frontend</div>
+        </div>
+        <div class="flex items-center text-white/20 text-2xl font-thin hidden md:block pt-8">→</div>
+        <div class="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-center min-w-[140px]">
+          <div class="text-2xl mb-2">🔄</div>
+          <div class="font-bold text-sm">Tauri IPC</div>
+          <div class="text-white/30 text-xs mt-1 font-mono">invoke()</div>
+        </div>
+        <div class="flex items-center text-white/20 text-2xl font-thin hidden md:block pt-8">→</div>
+        <div class="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-center min-w-[140px]">
+          <div class="text-2xl mb-2">🦀</div>
+          <div class="font-bold text-sm">Rust</div>
+          <div class="text-white/30 text-xs mt-1 font-mono">30 Commands</div>
+        </div>
+        <div class="flex items-center text-white/20 text-2xl font-thin hidden md:block pt-8">→</div>
+        <div class="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-center min-w-[140px]">
+          <div class="text-2xl mb-2">🗄️</div>
+          <div class="font-bold text-sm">SQLite</div>
+          <div class="text-white/30 text-xs mt-1 font-mono">7 Tables</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA ===== -->
+  <section class="relative py-24 md:py-32 px-6 bg-[#0D0F17] overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#FFC800] opacity-[0.02] blur-[120px]"></div>
+    </div>
+    <div class="max-w-3xl mx-auto text-center relative">
+      <div class="opacity-0" id="cta-content">
+        <span class="text-[#FFC800]/60 text-sm font-semibold tracking-widest uppercase">Get Started</span>
+        <h2 class="text-3xl md:text-5xl font-black mt-4 mb-6">ابدأ رحلة الإتقان الآن</h2>
+        <p class="text-white/40 text-lg mb-10 max-w-lg mx-auto">TypoMaster هو الرفيق المثالي لتطوير مهارات الطباعة — سواء كنت مبتدئاً أو محترفاً.</p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href="https://github.com/alhmli70/typomaster/releases" class="px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#FFC800] to-[#FFA000] text-[#0F111A] font-bold text-base shadow-2xl shadow-[#FFC800]/25 hover:shadow-[#FFC800]/40 transition-all hover:translate-y-[-2px] inline-flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            تحميل مجاني
+          </a>
+          <a href="https://github.com/alhmli70/typomaster" class="px-8 py-3.5 rounded-xl border border-white/[0.1] bg-white/[0.03] text-white/80 font-semibold hover:bg-white/[0.06] hover:text-white transition-all inline-flex items-center gap-2">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+            GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="border-t border-white/[0.04] py-8 px-6">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2 text-white/20 text-sm">
+        <span class="w-6 h-6 rounded-md bg-gradient-to-br from-[#FFC800] to-[#FFA000] flex items-center justify-center text-[#0F111A] font-black text-xs">T</span>
+        <span>TypoMaster — MIT License</span>
+      </div>
+      <div class="flex items-center gap-6 text-sm">
+        <a href="https://github.com/alhmli70/typomaster" class="text-white/30 hover:text-white/60 transition-colors">GitHub</a>
+        <a href="https://github.com/alhmli70/typomaster/releases" class="text-white/30 hover:text-white/60 transition-colors">Releases</a>
+        <a href="https://github.com/alhmli70/typomaster/blob/main/LICENSE" class="text-white/30 hover:text-white/60 transition-colors">License</a>
+        <a href="https://github.com/alhmli70/typomaster/blob/main/RELEASE_NOTES.md" class="text-white/30 hover:text-white/60 transition-colors">Release Notes</a>
+      </div>
+      <div class="text-white/20 text-sm">
+        Built with <span class="text-[#FFC800]">❤️</span> — React + Tauri + Rust
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // === GSAP Animations ===
+    document.addEventListener('DOMContentLoaded', () => {
+      const hasGSAP = typeof gsap !== 'undefined';
+
+      if (!hasGSAP) {
+        document.querySelectorAll('.opacity-0').forEach(el => el.classList.remove('opacity-0'));
+        return;
+      }
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Hero
+      gsap.to('#hero-badge', { opacity: 1, y: 0, duration: 0.6, delay: 0.2 });
+      gsap.to('#hero-title', { opacity: 1, y: 0, duration: 0.8, delay: 0.4 });
+      gsap.to('#hero-desc', { opacity: 1, y: 0, duration: 0.8, delay: 0.6 });
+      gsap.to('#hero-cta', { opacity: 1, y: 0, duration: 0.8, delay: 0.8 });
+      gsap.to('#hero-tech', { opacity: 1, y: 0, duration: 0.6, delay: 1.0 });
+
+      // Features
+      gsap.from('#features-header', {
+        opacity: 0, y: 60, duration: 0.8,
+        scrollTrigger: { trigger: '#features', start: 'top 70%' }
+      });
+      gsap.from('.feature-card', {
+        opacity: 0, y: 40, duration: 0.6, stagger: 0.08,
+        scrollTrigger: { trigger: '#features-grid', start: 'top 80%' }
+      });
+
+      // Screenshots header
+      gsap.from('#screenshots-header', {
+        opacity: 0, y: 60, duration: 0.8,
+        scrollTrigger: { trigger: '#screenshots', start: 'top 70%' }
+      });
+      gsap.from('.screenshot-card', {
+        opacity: 0, y: 40, duration: 0.6, stagger: 0.1,
+        scrollTrigger: { trigger: '#screenshots-grid', start: 'top 80%' }
+      });
+
+      // Games
+      gsap.from('#games-header', {
+        opacity: 0, y: 60, duration: 0.8,
+        scrollTrigger: { trigger: '#games', start: 'top 70%' }
+      });
+      gsap.from('.game-card', {
+        opacity: 0, y: 40, duration: 0.6, stagger: 0.1,
+        scrollTrigger: { trigger: '#games-grid', start: 'top 80%' }
+      });
+
+      // Stats
+      gsap.from('#stats-header', {
+        opacity: 0, y: 60, duration: 0.8,
+        scrollTrigger: { trigger: '#stats', start: 'top 70%' }
+      });
+      gsap.from('.stat-card', {
+        opacity: 0, y: 40, duration: 0.6, stagger: 0.12,
+        scrollTrigger: { trigger: '#stats-grid', start: 'top 80%' }
+      });
+
+      // Architecture
+      gsap.from('#arch-header', {
+        opacity: 0, y: 60, duration: 0.8,
+        scrollTrigger: { trigger: '#arch-header', start: 'top 80%' }
+      });
+      gsap.from('#arch-content', {
+        opacity: 0, y: 40, duration: 0.8, stagger: 0.15,
+        scrollTrigger: { trigger: '#arch-content', start: 'top 80%' }
+      });
+
+      // CTA
+      gsap.from('#cta-content', {
+        opacity: 0, y: 60, duration: 0.8,
+        scrollTrigger: { trigger: '#cta-content', start: 'top 75%' }
+      });
+
+      // === Counter Animation ===
+      function animateCounters() {
+        document.querySelectorAll('.counter').forEach(counter => {
+          const target = parseInt(counter.getAttribute('data-target'));
+          const duration = 2000;
+          const startTime = performance.now();
+
+          function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            counter.textContent = Math.floor(eased * target);
+            if (progress < 1) requestAnimationFrame(update);
+          }
+          requestAnimationFrame(update);
+        });
+      }
+
+      ScrollTrigger.create({
+        trigger: '#stats-grid',
+        start: 'top 80%',
+        onEnter: animateCounters,
+        once: true
+      });
+
+      // === Navbar scroll effect ===
+      const navbar = document.getElementById('navbar');
+      ScrollTrigger.create({
+        start: 'top -80px',
+        onUpdate: self => {
+          if (self.progress > 0) {
+            navbar.style.borderColor = 'rgba(255,255,255,0.08)';
+            navbar.style.backgroundColor = 'rgba(15,17,26,0.85)';
+          } else {
+            navbar.style.borderColor = 'transparent';
+            navbar.style.backgroundColor = 'transparent';
+          }
+        }
+      });
+    });
+
+    // === Cursor Glow ===
+    document.addEventListener('mousemove', e => {
+      const glow = document.getElementById('cursor-glow');
+      if (glow) {
+        glow.style.left = e.clientX - 300 + 'px';
+        glow.style.top = e.clientY - 300 + 'px';
+      }
+    });
+
+    // === Smooth scroll for anchor links ===
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(anchor.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  </script>
 </body>
 </html>
