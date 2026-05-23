@@ -1,0 +1,210 @@
+@import "tailwindcss";
+
+@theme {
+  --color-app-bg: var(--app-bg);
+  --color-app-surface: var(--app-surface);
+  --color-app-accent: var(--app-accent);
+  --color-app-accent-2: var(--app-accent-2);
+  --color-app-text: var(--app-text);
+  --color-app-text-muted: var(--app-text-muted);
+  --color-app-border: var(--app-border);
+
+  --font-sans: "Cairo", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  :root {
+    --app-bg: #0F111A;
+    --app-surface: #1E212B;
+    --app-accent: #FFC800;
+    --app-accent-2: #FFA000;
+    --app-text: #FFFFFF;
+    --app-text-muted: #8F9BA8;
+    --app-border: rgba(255, 255, 255, 0.06);
+    --logo-text: #111111;
+  }
+
+  /* === DARK THEMES === */
+
+  /* نيلي عميق — Rich indigo + violet (Analogous) */
+  [data-theme='indigo-dark'] {
+    --app-bg: #0E0C1A;
+    --app-surface: #1A1730;
+    --app-accent: #A78BFA;
+    --app-accent-2: #7C3AED;
+    --app-text: #EEF0FF;
+    --app-text-muted: #8B87A5;
+    --app-border: rgba(255, 255, 255, 0.06);
+  }
+
+  /* ياقوتي غامق — Deep ruby + emerald mint (Complementary) */
+  [data-theme='ruby-dark'] {
+    --app-bg: #1A0F12;
+    --app-surface: #2C1A20;
+    --app-accent: #34D399;
+    --app-accent-2: #FB7185;
+    --app-text: #FDF2F4;
+    --app-text-muted: #B8A0A8;
+    --app-border: rgba(255, 255, 255, 0.06);
+  }
+
+  /* بحري أنيق — Deep navy + amber gold (Complementary) */
+  [data-theme='navy-dark'] {
+    --app-bg: #0C1628;
+    --app-surface: #172442;
+    --app-accent: #F59E0B;
+    --app-accent-2: #38BDF8;
+    --app-text: #EEF2FF;
+    --app-text-muted: #8E98B8;
+    --app-border: rgba(255, 255, 255, 0.06);
+  }
+
+  /* غابي كثيف — Deep forest + bright amber (Triadic) */
+  [data-theme='forest-dark'] {
+    --app-bg: #0A1812;
+    --app-surface: #142E22;
+    --app-accent: #FBBF24;
+    --app-accent-2: #34D399;
+    --app-text: #ECFDF5;
+    --app-text-muted: #A0C0B0;
+    --app-border: rgba(255, 255, 255, 0.06);
+  }
+
+  /* فحمي كهربائي — Monochromatic charcoal + electric cyan */
+  [data-theme='charcoal-dark'] {
+    --app-bg: #111118;
+    --app-surface: #1D1D2A;
+    --app-accent: #22D3EE;
+    --app-accent-2: #64748B;
+    --app-text: #F1F5F9;
+    --app-text-muted: #949BA8;
+    --app-border: rgba(255, 255, 255, 0.06);
+  }
+
+  /* === LIGHT THEMES === */
+
+  /* نظيف مشرق — Premium cream + deep gold (فاخر كلاسيكي) */
+  [data-theme='clean-light'] {
+    --app-bg: #FBF8F2;
+    --app-surface: #F4EFE7;
+    --app-accent: #B8860B;
+    --app-accent-2: #D4A76A;
+    --app-text: #1C1814;
+    --app-text-muted: #8C7D6E;
+    --app-border: rgba(0, 0, 0, 0.08);
+  }
+
+  /* خوخي ناعم — Peach blush + deep burgundy (رومانسي فاخر) */
+  [data-theme='peach-light'] {
+    --app-bg: #FDF8F4;
+    --app-surface: #F7EDE6;
+    --app-accent: #8B3A4F;
+    --app-accent-2: #D49A82;
+    --app-text: #2B1D1A;
+    --app-text-muted: #867066;
+    --app-border: rgba(0, 0, 0, 0.08);
+  }
+
+  /* سماوي منعش — Icy white + deep navy (نظيف احترافي) */
+  [data-theme='sky-light'] {
+    --app-bg: #F7F9FB;
+    --app-surface: #EEF0F4;
+    --app-accent: #1E4A6E;
+    --app-accent-2: #C4A98E;
+    --app-text: #1A1E24;
+    --app-text-muted: #6A7A8C;
+    --app-border: rgba(0, 0, 0, 0.08);
+  }
+
+  /* نعناعي فاتح — Mint cream + deep emerald (طبيعي فاخر) */
+  [data-theme='mint-light'] {
+    --app-bg: #F7F9F5;
+    --app-surface: #EEF2EA;
+    --app-accent: #1B6B4A;
+    --app-accent-2: #C4A87A;
+    --app-text: #1C221E;
+    --app-text-muted: #7A8578;
+    --app-border: rgba(0, 0, 0, 0.08);
+  }
+
+  /* رمادي لطيف — Ivory + deep plum (عصري أنيق) */
+  [data-theme='gray-light'] {
+    --app-bg: #FAF7F3;
+    --app-surface: #F1EDE7;
+    --app-accent: #5C3D6E;
+    --app-accent-2: #B89474;
+    --app-text: #231F21;
+    --app-text-muted: #7D746F;
+    --app-border: rgba(0, 0, 0, 0.08);
+  }
+
+  body {
+    background-color: var(--app-bg);
+    color: var(--app-text);
+    font-family: var(--font-sans);
+    direction: var(--app-dir, rtl);
+    overflow: hidden;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--app-surface) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: var(--color-app-border);
+    border-radius: 2px;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: var(--color-app-text-muted);
+  }
+}
+
+.glassmorphism-enabled .bg-app-surface {
+  background-color: rgba(30, 32, 41, 0.5) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.glassmorphism-enabled [data-theme='light'] .bg-app-surface {
+  background-color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* === LIGHT THEME COLOR ADAPTATION === */
+/* In light themes, override --color-white to use accent so bg-white/X, border-white/X, hover:bg-white/X
+   use the accent color at the correct opacity instead of white-on-beige (which is invisible). */
+/* text-white is overridden separately to use app-text (dark) for readability. */
+
+[data-theme='clean-light'],
+[data-theme='peach-light'],
+[data-theme='sky-light'],
+[data-theme='mint-light'],
+[data-theme='gray-light'] {
+  --color-white: var(--app-accent);
+  --logo-text: #FFFFFF;
+}
+
+[data-theme$='light'] .text-white {
+  color: var(--app-text);
+}
+
+[data-theme$='light'] .text-black {
+  color: #fff;
+}
+
+[data-theme$='light'] .bg-app-accent .text-white,
+[data-theme$='light'] [class*="bg-red"] .text-white,
+[data-theme$='light'] [class*="bg-green"] .text-white,
+[data-theme$='light'] [class*="bg-blue"] .text-white,
+[data-theme$='light'] [class*="bg-purple"] .text-white,
+[data-theme$='light'] [class*="bg-black/"] .text-white {
+  color: #fff;
+}

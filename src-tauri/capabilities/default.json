@@ -1,0 +1,10 @@
+{
+  "identifier": "default",
+  "description": "Default capability set for TypoMaster",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "fs:default",
+    "shell:default"
+  ]
+}

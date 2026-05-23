@@ -1,0 +1,8 @@
+{
+  "name": "TypoMaster",
+  "description": "منصة احترافية لتعلم الطباعة السريعة وكتابة الأكواد",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
