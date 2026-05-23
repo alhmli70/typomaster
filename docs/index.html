@@ -3,530 +3,1028 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="TypoMaster — برنامج احترافي لتعليم الطباعة بالعربية والإنجليزية. تطبيق سطح مكتب بتقنية Tauri + React مع 210+ تمرين و 40 درس و 5 ألعاب تفاعلية.">
-  <meta name="keywords" content="تعليم الطباعة, طباعة عربي, typing tutor, touch typing, Tauri, desktop app">
+  <title>TypoMaster — أتقن الطباعة</title>
+  <meta name="description" content="برنامج احترافي لتعليم الطباعة بالعربية والإنجليزية — 210+ تمرين، 40 درس، 5 ألعاب، 10 ثيمات. مبني بـ React + Tauri + Rust + SQLite.">
   <meta property="og:title" content="TypoMaster — أتقن الطباعة">
-  <meta property="og:description" content="Professional bilingual typing trainer. React + Tauri + Rust + SQLite.">
+  <meta property="og:description" content="Professional bilingual typing trainer. 210+ exercises, 40 lessons, 5 games.">
   <meta property="og:image" content="https://raw.githubusercontent.com/alhmli70/typomaster/main/banner.svg">
   <meta property="og:url" content="https://alhmli70.github.io/typomaster">
   <meta name="twitter:card" content="summary_large_image">
-  <title>TypoMaster — أتقن الطباعة</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='96' fill='%23FFC800'/><text x='256' y='320' font-family='Arial' font-size='320' font-weight='900' text-anchor='middle' fill='%230F111A'>T</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/gsap.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/ScrollTrigger.min.js" defer></script>
-</head>
-<body class="bg-[#0F111A] text-white font-['Cairo'] overflow-x-hidden">
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/MotionPathPlugin.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300..900&family=JetBrains+Mono:wght@400..700&display=swap');
 
-  <!-- ===== CURSOR GLOW ===== -->
-  <div id="cursor-glow" class="fixed pointer-events-none z-50 w-[600px] h-[600px] rounded-full opacity-[0.04] transition-all duration-500" style="background: radial-gradient(circle, #FFC800 0%, transparent 70%);"></div>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0A0C14;
+      --bg-raised: #0F121C;
+      --surface: #161A2B;
+      --border: rgba(255, 200, 0, 0.06);
+      --gold: #FFC800;
+      --gold-2: #FFA000;
+      --gold-grad: linear-gradient(135deg, #FFC800, #FFA000);
+      --text: #F0F2F8;
+      --text-muted: #6B7394;
+      --radius: 16px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== Cursor Glow ===== */
+    #cursor {
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      background: radial-gradient(circle, rgba(255,200,0,0.04) 0%, transparent 60%);
+      transform: translate(-50%, -50%);
+      transition: left 0.15s ease-out, top 0.15s ease-out;
+      will-change: left, top;
+    }
+
+    /* ===== Scrollbar ===== */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,200,0,0.15); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,200,0,0.3); }
+
+    /* ===== Navbar ===== */
+    .navbar {
+      position: fixed; top: 0; inset-inline: 0; z-index: 100;
+      padding: 0 24px; height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .navbar.scrolled {
+      background: rgba(10, 12, 20, 0.82);
+      backdrop-filter: blur(24px) saturate(1.4);
+      border-bottom: 1px solid rgba(255, 200, 0, 0.06);
+      height: 56px;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 800; font-size: 1.2rem;
+      text-decoration: none; color: var(--text);
+    }
+    .nav-logo-mark {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: var(--gold-grad);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; color: #0A0C14; font-weight: 900;
+      box-shadow: 0 0 20px rgba(255,200,0,0.15);
+    }
+    .nav-logo span { color: var(--gold); }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a {
+      font-size: 0.85rem; font-weight: 500;
+      color: var(--text-muted); text-decoration: none;
+      transition: color 0.3s; position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -4px; inset-inline: 50%;
+      width: 0; height: 2px; background: var(--gold);
+      transition: 0.3s; border-radius: 2px;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { width: 100%; inset-inline: 0; }
+    .nav-cta {
+      padding: 8px 22px; border-radius: 10px;
+      background: var(--gold-grad); color: #0A0C14;
+      font-weight: 700; font-size: 0.85rem;
+      text-decoration: none; transition: 0.3s;
+      box-shadow: 0 4px 20px rgba(255,200,0,0.15);
+    }
+    .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 6px 30px rgba(255,200,0,0.25); }
+
+    /* ===== Common ===== */
+    section { position: relative; }
+    .section-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 4px 16px; border-radius: 100px;
+      background: rgba(255,200,0,0.06); border: 1px solid rgba(255,200,0,0.08);
+      color: var(--gold); font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .section-label span { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); }
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 900;
+      line-height: 1.15; margin-bottom: 12px;
+    }
+    .section-sub {
+      color: var(--text-muted); font-size: 1.05rem;
+      max-width: 560px; line-height: 1.7;
+    }
+    .glass-card {
+      background: rgba(22, 26, 43, 0.5);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 200, 0, 0.06);
+      border-radius: var(--radius);
+      transition: 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .glass-card:hover {
+      border-color: rgba(255, 200, 0, 0.15);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(255, 200, 0, 0.04);
+    }
+    .gold-text { background: var(--gold-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .gold-border { border: 1px solid rgba(255, 200, 0, 0.1); }
+    .gold-border:hover { border-color: rgba(255, 200, 0, 0.25); }
+
+    /* ===== Hero ===== */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center;
+      padding: 0 24px; padding-top: 64px;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+    }
+    .hero-bg .orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(100px);
+    }
+    .hero-bg .orb-1 { width: 600px; height: 600px; background: rgba(255,200,0,0.025); top: -15%; left: -10%; }
+    .hero-bg .orb-2 { width: 500px; height: 500px; background: rgba(255,160,0,0.02); bottom: -10%; right: -5%; }
+    .hero-bg .orb-3 { width: 800px; height: 800px; background: rgba(255,200,0,0.012); top: 50%; left: 50%; transform: translate(-50%,-50%); }
+
+    .hero-grid-line { position: absolute; inset: 0; opacity: 0.03;
+      background-image:
+        linear-gradient(rgba(255,200,0,0.3) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,200,0,0.3) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .hero-inner {
+      position: relative; z-index: 2;
+      max-width: 1280px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 60px; align-items: center;
+      width: 100%;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 4px 14px 4px 10px; border-radius: 100px;
+      background: rgba(255,200,0,0.06); border: 1px solid rgba(255,200,0,0.08);
+      font-size: 0.75rem; font-weight: 600; color: var(--gold);
+      margin-bottom: 24px; opacity: 0;
+    }
+    .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: pulse-dot 2s infinite; }
+    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 5vw, 4.2rem); font-weight: 900;
+      line-height: 1.08; margin-bottom: 20px; opacity: 0;
+    }
+    .hero h1 .outline {
+      background: var(--gold-grad);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 1.05rem; color: var(--text-muted);
+      line-height: 1.8; margin-bottom: 36px; max-width: 520px; opacity: 0;
+    }
+    .hero p strong { color: var(--text); }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; opacity: 0; }
+    .btn-primary {
+      padding: 14px 32px; border-radius: 12px;
+      background: var(--gold-grad); color: #0A0C14;
+      font-weight: 700; font-size: 0.95rem; text-decoration: none;
+      transition: 0.3s; display: inline-flex; align-items: center; gap: 8px;
+      box-shadow: 0 4px 24px rgba(255,200,0,0.2);
+    }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 40px rgba(255,200,0,0.3); }
+    .btn-secondary {
+      padding: 14px 28px; border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.06);
+      color: var(--text); font-weight: 600; font-size: 0.95rem;
+      text-decoration: none; transition: 0.3s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.12); }
+    .hero-tech {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 40px; opacity: 0;
+    }
+    .hero-tech span {
+      padding: 4px 14px; border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);
+      color: rgba(255,255,255,0.2);
+    }
+
+    /* Hero mockup */
+    .hero-mockup {
+      position: relative; perspective: 1200px; opacity: 0;
+    }
+    .mockup-frame {
+      background: linear-gradient(145deg, #121624, #0E1018);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.04);
+      overflow: hidden;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,200,0,0.04);
+      transform: rotateY(-8deg) rotateX(4deg);
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .mockup-frame:hover { transform: rotateY(-4deg) rotateX(2deg); }
+    .mockup-titlebar {
+      height: 32px; background: rgba(10,12,20,0.6);
+      display: flex; align-items: center; gap: 8px; padding: 0 14px;
+    }
+    .mockup-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .mockup-dot.r { background: #FF5F56; }
+    .mockup-dot.y { background: #FFBD2E; }
+    .mockup-dot.g { background: #27C93F; }
+    .mockup-body { padding: 16px; display: flex; gap: 12px; }
+    .mockup-sidebar {
+      width: 36px; display: flex; flex-direction: column; gap: 6px;
+    }
+    .mockup-sidebar div {
+      height: 6px; border-radius: 3px;
+      background: rgba(255,255,255,0.1);
+    }
+    .mockup-sidebar div:first-child { background: var(--gold); opacity: 0.4; }
+    .mockup-main { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .mockup-row { display: flex; gap: 8px; }
+    .mockup-card {
+      flex: 1; border-radius: 8px; padding: 10px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+    .mockup-card .stat-val {
+      font-size: 1.1rem; font-weight: 800; margin-bottom: 2px;
+    }
+    .mockup-card .stat-lbl {
+      font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;
+    }
+    .mockup-chart {
+      margin-top: 4px; display: flex; align-items: flex-end; gap: 4px; height: 30px;
+    }
+    .mockup-chart div {
+      flex: 1; border-radius: 2px 2px 0 0; background: rgba(255,200,0,0.15);
+      transition: 0.3s;
+    }
+    .mockup-chart div:nth-child(4) { background: rgba(255,200,0,0.3); }
+    .mockup-chart div:nth-child(7) { background: rgba(255,200,0,0.35); }
+
+    /* ===== Marquee ===== */
+    .marquee-section { padding: 40px 0; overflow: hidden; }
+    .marquee-track {
+      display: flex; gap: 48px; width: max-content;
+      animation: marquee 40s linear infinite;
+    }
+    .marquee-track span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem; color: rgba(255,255,255,0.08);
+      white-space: nowrap; letter-spacing: 0.05em;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .marquee-track span::before { content: '◆'; font-size: 0.4rem; color: var(--gold); opacity: 0.3; }
+    @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+    /* ===== Features ===== */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;
+    }
+    .feat-card {
+      padding: 28px; border-radius: var(--radius);
+      background: rgba(22, 26, 43, 0.3);
+      border: 1px solid rgba(255, 200, 0, 0.04);
+      transition: 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      position: relative; overflow: hidden;
+    }
+    .feat-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,200,0,0.02), transparent);
+      opacity: 0; transition: 0.5s;
+    }
+    .feat-card:hover { border-color: rgba(255,200,0,0.12); transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,0.2); }
+    .feat-card:hover::before { opacity: 1; }
+    .feat-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: rgba(255,200,0,0.06);
+      border: 1px solid rgba(255,200,0,0.06);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; margin-bottom: 16px;
+    }
+    .feat-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .feat-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.7; }
+
+    /* ===== Screenshots ===== */
+    .screenshot-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    }
+    .screenshot-grid > :first-child { grid-column: span 2; grid-row: span 2; }
+    .shot-card {
+      border-radius: 12px; overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.04);
+      position: relative; cursor: pointer;
+      transition: 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .shot-card:hover { border-color: rgba(255,200,0,0.12); transform: translateY(-2px); }
+    .shot-card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: 0.7s; }
+    .shot-card:hover img { transform: scale(1.04); }
+    .shot-card .overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(transparent 60%, rgba(10,12,20,0.7));
+      opacity: 0; transition: 0.4s;
+    }
+    .shot-card:hover .overlay { opacity: 1; }
+    .shot-card .label {
+      position: absolute; bottom: 0; inset-inline: 0; padding: 14px;
+      transform: translateY(8px); opacity: 0; transition: 0.4s;
+      font-size: 0.85rem; font-weight: 600;
+    }
+    .shot-card:hover .label { transform: translateY(0); opacity: 1; }
+
+    /* ===== Stats ===== */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .stat-item {
+      padding: 32px 20px; border-radius: var(--radius); text-align: center;
+      background: rgba(22, 26, 43, 0.3);
+      border: 1px solid rgba(255, 200, 0, 0.04);
+    }
+    .stat-ring {
+      position: relative; width: 80px; height: 80px;
+      margin: 0 auto 16px;
+    }
+    .stat-ring svg { transform: rotate(-90deg); }
+    .stat-ring .bg { fill: none; stroke: rgba(255,200,0,0.06); stroke-width: 4; }
+    .stat-ring .fg {
+      fill: none; stroke: url(#goldGrad); stroke-width: 4;
+      stroke-linecap: round;
+      stroke-dasharray: 220;
+      stroke-dashoffset: 220;
+      transition: stroke-dashoffset 2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .stat-ring .fg.visible { stroke-dashoffset: var(--target); }
+    .stat-val {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; font-weight: 900; color: var(--gold);
+    }
+    .stat-label { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+
+    /* ===== Games ===== */
+    .games-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .game-card {
+      padding: 28px 20px; border-radius: var(--radius); text-align: center;
+      background: linear-gradient(145deg, rgba(22,26,43,0.3), rgba(22,26,43,0.1));
+      border: 1px solid rgba(255,200,0,0.04);
+      transition: 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      position: relative; overflow: hidden;
+    }
+    .game-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: var(--gold-grad); opacity: 0; transition: 0.5s;
+    }
+    .game-card:hover { transform: translateY(-6px); border-color: rgba(255,200,0,0.1); }
+    .game-card:hover::before { opacity: 1; }
+    .game-emoji { font-size: 2.2rem; margin-bottom: 12px; }
+    .game-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .game-card p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; }
+
+    /* ===== Architecture ===== */
+    .arch-flow {
+      display: flex; align-items: center; justify-content: center;
+      flex-wrap: wrap; gap: 0;
+    }
+    .arch-node {
+      padding: 20px 28px; border-radius: 12px; text-align: center;
+      background: rgba(22,26,43,0.3); border: 1px solid rgba(255,200,0,0.04);
+      min-width: 120px; transition: 0.3s;
+    }
+    .arch-node:hover { border-color: rgba(255,200,0,0.12); transform: translateY(-4px); }
+    .arch-node .emoji { font-size: 1.5rem; margin-bottom: 4px; }
+    .arch-node .name { font-weight: 700; font-size: 0.9rem; }
+    .arch-node .desc { font-size: 0.65rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+    .arch-arrow {
+      padding: 0 12px; color: rgba(255,255,255,0.06);
+      font-size: 1.5rem; font-weight: 100;
+    }
+
+    /* ===== Roadmap ===== */
+    .roadmap { position: relative; padding-right: 28px; }
+    .roadmap::before {
+      content: ''; position: absolute; right: 8px; top: 0; bottom: 0;
+      width: 1px; background: rgba(255,200,0,0.08);
+    }
+    .roadmap-item { position: relative; padding: 0 0 32px 0; }
+    .roadmap-item::before {
+      content: ''; position: absolute; right: -24px; top: 6px;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: rgba(255,200,0,0.08); border: 2px solid rgba(255,200,0,0.12);
+      transition: 0.3s;
+    }
+    .roadmap-item:hover::before { background: var(--gold); border-color: var(--gold); }
+    .roadmap-item .tag {
+      display: inline-block; padding: 2px 10px; border-radius: 4px;
+      font-size: 0.65rem; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+      background: rgba(255,200,0,0.06); color: var(--gold);
+      margin-bottom: 6px;
+    }
+    .roadmap-item h4 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .roadmap-item p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; }
+
+    /* ===== FAQ ===== */
+    .faq-item {
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      padding: 16px 0; cursor: pointer;
+    }
+    .faq-q {
+      display: flex; justify-content: space-between; align-items: center;
+      font-weight: 600; font-size: 0.95rem;
+      user-select: none;
+    }
+    .faq-q span { transition: 0.3s; font-size: 1.2rem; }
+    .faq-item.open .faq-q span { transform: rotate(45deg); }
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      transition: 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      font-size: 0.85rem; color: var(--text-muted); line-height: 1.7;
+    }
+    .faq-item.open .faq-a { max-height: 200px; padding-top: 12px; }
+
+    /* ===== CTA ===== */
+    .cta-section {
+      padding: 100px 24px; text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .cta-bg {
+      position: absolute; inset: 0; pointer-events: none;
+    }
+    .cta-bg .orb {
+      position: absolute; border-radius: 50%; filter: blur(120px);
+    }
+    .cta-bg .orb-1 { width: 500px; height: 500px; background: rgba(255,200,0,0.03); top: 50%; left: 50%; transform: translate(-50%,-50%); }
+    .cta-bg .orb-2 { width: 300px; height: 300px; background: rgba(255,160,0,0.02); bottom: 0; right: 0; }
+
+    /* ===== Footer ===== */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.03);
+      padding: 40px 24px;
+    }
+    .footer-inner {
+      max-width: 1280px; margin: 0 auto;
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;
+    }
+    .footer-inner .copy { font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+    .footer-inner .copy .mark { width: 22px; height: 22px; border-radius: 6px; background: var(--gold-grad); display: flex; align-items: center; justify-content: center; font-size: 0.6rem; color: #0A0C14; font-weight: 900; }
+    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+    .footer-links a { font-size: 0.8rem; color: var(--text-muted); text-decoration: none; transition: 0.3s; }
+    .footer-links a:hover { color: var(--text); }
+    .footer-made { font-size: 0.75rem; color: rgba(255,255,255,0.12); }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+      .hero-mockup { max-width: 500px; margin: 0 auto; }
+      .mockup-frame { transform: none; }
+      .mockup-frame:hover { transform: none; }
+      .nav-links { display: none; }
+      .screenshot-grid { grid-template-columns: 1fr 1fr; }
+      .screenshot-grid > :first-child { grid-column: span 2; grid-row: span 1; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .screenshot-grid { grid-template-columns: 1fr; }
+      .screenshot-grid > :first-child { grid-column: span 1; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .games-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ===== Lightbox ===== */
+    .lightbox {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(20px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: 0.4s;
+    }
+    .lightbox.open { opacity: 1; pointer-events: auto; }
+    .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06); }
+    .lightbox-close {
+      position: absolute; top: 20px; right: 20px;
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(255,255,255,0.06); border: none;
+      color: #fff; font-size: 1.2rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: 0.3s;
+    }
+    .lightbox-close:hover { background: rgba(255,255,255,0.12); }
+  </style>
+</head>
+<body>
+
+  <div id="cursor"></div>
+
+  <!-- ===== LIGHTBOX ===== -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <img id="lightbox-img" src="" alt="Screenshot">
+  </div>
 
   <!-- ===== NAVBAR ===== -->
-  <nav class="fixed top-0 inset-x-0 z-40 backdrop-blur-xl border-b border-white/[0.04] transition-all duration-300" id="navbar">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-      <a href="#" class="flex items-center gap-3 group">
-        <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#FFC800] to-[#FFA000] flex items-center justify-center text-[#0F111A] font-black text-lg shadow-lg shadow-[#FFC800]/20 group-hover:shadow-[#FFC800]/40 transition-shadow">T</span>
-        <span class="font-bold text-lg tracking-tight">Typo<span class="text-[#FFC800]">Master</span></span>
-      </a>
-      <div class="hidden md:flex items-center gap-8 text-sm font-medium">
-        <a href="#features" class="text-white/60 hover:text-white transition-colors">الميزات</a>
-        <a href="#screenshots" class="text-white/60 hover:text-white transition-colors">لقطات</a>
-        <a href="#games" class="text-white/60 hover:text-white transition-colors">الألعاب</a>
-        <a href="#stats" class="text-white/60 hover:text-white transition-colors">إحصائيات</a>
-        <a href="https://github.com/alhmli70/typomaster/releases" class="relative group">
-          <span class="px-5 py-2 rounded-lg bg-gradient-to-r from-[#FFC800] to-[#FFA000] text-[#0F111A] font-bold text-sm shadow-lg shadow-[#FFC800]/25 hover:shadow-[#FFC800]/40 transition-all hover:translate-y-[-1px] inline-block">تحميل</span>
-        </a>
-      </div>
+  <nav class="navbar" id="navbar">
+    <a href="#" class="nav-logo">
+      <span class="nav-logo-mark">T</span>
+      Typo<span>Master</span>
+    </a>
+    <div class="nav-links">
+      <a href="#features">الميزات</a>
+      <a href="#screenshots">لقطات</a>
+      <a href="#games">الألعاب</a>
+      <a href="#stats">إحصائيات</a>
+      <a href="#roadmap">الخطة</a>
+      <a href="#faq">الأسئلة</a>
+      <a href="https://github.com/alhmli70/typomaster/releases" class="nav-cta">تحميل</a>
     </div>
   </nav>
 
   <!-- ===== HERO ===== -->
-  <section class="relative min-h-screen flex items-center justify-center px-6 pt-16 overflow-hidden">
-    <div class="absolute inset-0 pointer-events-none">
-      <div class="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-[#FFC800] opacity-[0.02] blur-[100px]"></div>
-      <div class="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-[#FFA000] opacity-[0.015] blur-[100px]"></div>
-      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-[#FFC800] opacity-[0.01] blur-[120px]"></div>
+  <section class="hero" id="hero">
+    <div class="hero-bg">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+      <div class="hero-grid-line"></div>
     </div>
-    <div class="relative max-w-5xl mx-auto text-center">
-      <div class="mb-6 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FFC800]/[0.06] border border-[#FFC800]/[0.12] text-[#FFC800] text-xs font-semibold tracking-wider opacity-0" id="hero-badge">
-        <span class="w-1.5 h-1.5 rounded-full bg-[#FFC800] animate-pulse"></span>
-        الإصدار 1.0.0 — جاهز للتثبيت
-      </div>
-      <h1 class="text-5xl md:text-7xl lg:text-8xl font-black leading-[1.1] mb-6 opacity-0" id="hero-title">
-        أتقن
-        <span class="bg-gradient-to-r from-[#FFC800] via-[#FFB300] to-[#FFA000] bg-clip-text text-transparent">الطباعة</span>
-        <br>
-        <span class="text-3xl md:text-4xl lg:text-5xl font-light text-white/40 tracking-wide">Master Your Typing</span>
-      </h1>
-      <p class="text-white/40 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed opacity-0" id="hero-desc">
-        تطوير مهارات الطباعة بالعربية والإنجليزية مع <strong class="text-white/70">210+ تمرين</strong>،
-        <strong class="text-white/70">40 درس</strong>، <strong class="text-white/70">5 ألعاب تفاعلية</strong>،
-        وتحليلات أداء متقدمة — كل هذا في تطبيق سطح مكتب أنيق وسريع.
-      </p>
-      <div class="flex flex-wrap justify-center gap-4 opacity-0" id="hero-cta">
-        <a href="https://github.com/alhmli70/typomaster/releases" class="group relative px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#FFC800] to-[#FFA000] text-[#0F111A] font-bold text-base shadow-2xl shadow-[#FFC800]/25 hover:shadow-[#FFC800]/40 transition-all hover:translate-y-[-2px]">
-          <span class="relative z-10 flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            تحميل التطبيق
-          </span>
-        </a>
-        <a href="https://github.com/alhmli70/typomaster" class="px-8 py-3.5 rounded-xl border border-white/[0.1] bg-white/[0.03] text-white/80 font-semibold text-base hover:bg-white/[0.06] hover:text-white transition-all">
-          <span class="flex items-center gap-2">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+    <div class="hero-inner">
+      <div>
+        <div class="hero-badge" id="heroBadge">
+          <span class="dot"></span>
+          الإصدار 1.0.0 — جاهز للتثبيت
+        </div>
+        <h1 id="heroTitle">
+          أتقن<br>
+          <span class="outline">الطباعة</span>
+        </h1>
+        <p id="heroDesc">
+          تطوير مهارات الطباعة بالعربية والإنجليزية مع <strong>210+ تمرين</strong>،
+          <strong>40 درس</strong>، <strong>5 ألعاب تفاعلية</strong>،
+          وتحليلات أداء متقدمة — في تطبيق سطح مكتب أنيق وسريع.
+        </p>
+        <div class="hero-actions" id="heroActions">
+          <a href="https://github.com/alhmli70/typomaster/releases" class="btn-primary">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            تحميل مجاني
+          </a>
+          <a href="https://github.com/alhmli70/typomaster" class="btn-secondary">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
             كود المصدر
-          </span>
-        </a>
+          </a>
+        </div>
+        <div class="hero-tech" id="heroTech">
+          <span>React 19</span>
+          <span>TypeScript</span>
+          <span>Tauri 2</span>
+          <span>Rust</span>
+          <span>SQLite</span>
+          <span>Tailwind CSS</span>
+        </div>
       </div>
-      <div class="mt-16 opacity-0" id="hero-tech">
-        <div class="flex flex-wrap justify-center gap-3 text-xs font-mono">
-          <span class="px-3 py-1.5 rounded-md bg-white/[0.03] border border-white/[0.06] text-white/30">React 19</span>
-          <span class="px-3 py-1.5 rounded-md bg-white/[0.03] border border-white/[0.06] text-white/30">TypeScript</span>
-          <span class="px-3 py-1.5 rounded-md bg-white/[0.03] border border-white/[0.06] text-white/30">Tauri 2</span>
-          <span class="px-3 py-1.5 rounded-md bg-white/[0.03] border border-white/[0.06] text-white/30">Rust</span>
-          <span class="px-3 py-1.5 rounded-md bg-white/[0.03] border border-white/[0.06] text-white/30">SQLite</span>
-          <span class="px-3 py-1.5 rounded-md bg-white/[0.03] border border-white/[0.06] text-white/30">Tailwind CSS</span>
+      <div class="hero-mockup" id="heroMockup">
+        <div class="mockup-frame">
+          <div class="mockup-titlebar">
+            <div class="mockup-dot r"></div>
+            <div class="mockup-dot y"></div>
+            <div class="mockup-dot g"></div>
+          </div>
+          <div class="mockup-body">
+            <div class="mockup-sidebar">
+              <div></div><div></div><div></div><div></div><div></div>
+            </div>
+            <div class="mockup-main">
+              <div class="mockup-row">
+                <div class="mockup-card">
+                  <div class="stat-val" style="color:#4F8CFF">47</div>
+                  <div class="stat-lbl">WPM</div>
+                </div>
+                <div class="mockup-card">
+                  <div class="stat-val" style="color:#34D399">96%</div>
+                  <div class="stat-lbl">ACCURACY</div>
+                </div>
+                <div class="mockup-card">
+                  <div class="stat-val" style="color:var(--gold)">1,280</div>
+                  <div class="stat-lbl">XP</div>
+                </div>
+                <div class="mockup-card">
+                  <div class="stat-val" style="color:#A78BFA">12</div>
+                  <div class="stat-lbl">STREAK</div>
+                </div>
+              </div>
+              <div style="height:60px; border-radius:8px; background:rgba(255,255,255,0.015); border:1px solid rgba(255,255,255,0.03); padding:8px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                  <span style="font-size:0.55rem; color:var(--text-muted); letter-spacing:0.08em; text-transform:uppercase;">Weekly Activity</span>
+                </div>
+                <div class="mockup-chart">
+                  <div style="height:18px"></div>
+                  <div style="height:28px"></div>
+                  <div style="height:14px"></div>
+                  <div style="height:38px"></div>
+                  <div style="height:22px"></div>
+                  <div style="height:16px"></div>
+                  <div style="height:34px"></div>
+                </div>
+              </div>
+              <div style="display:flex; gap:8px; margin-top:4px;">
+                <div style="flex:1; border-radius:8px; background:rgba(255,255,255,0.015); border:1px solid rgba(255,255,255,0.03); padding:8px; display:flex; gap:6px; align-items:center;">
+                  <span style="font-size:0.7rem;">🏆</span>
+                  <div><div style="font-size:0.65rem; font-weight:600;">Level 8</div><div style="font-size:0.5rem; color:var(--text-muted);">Progress 64%</div></div>
+                </div>
+                <div style="flex:1; border-radius:8px; background:rgba(255,255,255,0.015); border:1px solid rgba(255,255,255,0.03); padding:8px; display:flex; align-items:center; justify-content:center;">
+                  <div style="width:100%; height:4px; border-radius:2px; background:rgba(255,255,255,0.06); overflow:hidden;">
+                    <div style="width:64%; height:100%; border-radius:2px; background:var(--gold-grad);"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <div class="absolute bottom-8 inset-x-0 flex justify-center animate-bounce opacity-30">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
-    </div>
   </section>
+
+  <!-- ===== MARQUEE ===== -->
+  <div class="marquee-section">
+    <div class="marquee-track" id="marquee">
+      <span>React 19</span><span>TypeScript 5.8</span><span>Tauri 2</span><span>Rust 2021</span><span>SQLite</span>
+      <span>Tailwind CSS 4</span><span>Vite 6</span><span>Lucide</span><span>Motion</span><span>Node.js 20+</span>
+      <span>React 19</span><span>TypeScript 5.8</span><span>Tauri 2</span><span>Rust 2021</span><span>SQLite</span>
+      <span>Tailwind CSS 4</span><span>Vite 6</span><span>Lucide</span><span>Motion</span><span>Node.js 20+</span>
+    </div>
+  </div>
 
   <!-- ===== FEATURES ===== -->
-  <section id="features" class="relative py-24 md:py-32 px-6">
-    <div class="max-w-7xl mx-auto">
-      <div class="text-center mb-16 md:mb-20 opacity-0" id="features-header">
-        <span class="text-[#FFC800]/60 text-sm font-semibold tracking-widest uppercase">Features</span>
-        <h2 class="text-3xl md:text-5xl font-black mt-3">ميزات احترافية</h2>
-        <p class="text-white/30 text-lg mt-3 max-w-xl mx-auto">كل ما تحتاجه لتصبح محترفاً في الطباعة</p>
+  <section id="features" style="padding:80px 24px;">
+    <div style="max-width:1280px; margin:0 auto;">
+      <div style="text-align:center; margin-bottom:60px; opacity:0;" id="featHeader">
+        <div class="section-label" style="margin:0 auto 16px;"><span></span>Features</div>
+        <h2 class="section-title">ميزات احترافية<br><span class="gold-text">للمبتدئين والمحترفين</span></h2>
+        <p class="section-sub" style="margin:0 auto;">كل ما تحتاجه لتصبح محترفاً في الطباعة على لوحة المفاتيح</p>
       </div>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5" id="features-grid">
-        <div class="feature-card group relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-[#FFC800]/[0.15] transition-all duration-500 cursor-default">
-          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <div class="relative">
-            <span class="text-3xl">📚</span>
-            <h3 class="text-lg font-bold mt-4 mb-2">40 درساً نظرياً</h3>
-            <p class="text-white/40 text-sm leading-relaxed">20 عربي + 20 إنجليزي — من المفاتيح الرئيسية إلى السرعة. تغطية شاملة لجميع المستويات.</p>
-          </div>
-        </div>
-        <div class="feature-card group relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-[#FFC800]/[0.15] transition-all duration-500 cursor-default">
-          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <div class="relative">
-            <span class="text-3xl">⌨️</span>
-            <h3 class="text-lg font-bold mt-4 mb-2">210+ تمرين عملي</h3>
-            <p class="text-white/40 text-sm leading-relaxed">10 مجموعات، 3 مستويات صعوبة، تمارين تصاعدية تغطي كل جوانب الطباعة.</p>
-          </div>
-        </div>
-        <div class="feature-card group relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-[#FFC800]/[0.15] transition-all duration-500 cursor-default">
-          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <div class="relative">
-            <span class="text-3xl">🎮</span>
-            <h3 class="text-lg font-bold mt-4 mb-2">5 ألعاب تفاعلية</h3>
-            <p class="text-white/40 text-sm leading-relaxed">الكلمات المتساقطة، قناص، نينجا الحروف، ذاكرة الطباعة، سباق السرعة — تعلم ممتع.</p>
-          </div>
-        </div>
-        <div class="feature-card group relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-[#FFC800]/[0.15] transition-all duration-500 cursor-default">
-          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <div class="relative">
-            <span class="text-3xl">📊</span>
-            <h3 class="text-lg font-bold mt-4 mb-2">إحصائيات متقدمة</h3>
-            <p class="text-white/40 text-sm leading-relaxed">WPM، الدقة، الأخطاء، رسوم بيانية أسبوعية، Streak الأيام — تتبع كل شيء.</p>
-          </div>
-        </div>
-        <div class="feature-card group relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-[#FFC800]/[0.15] transition-all duration-500 cursor-default">
-          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <div class="relative">
-            <span class="text-3xl">🏆</span>
-            <h3 class="text-lg font-bold mt-4 mb-2">10+ إنجازات</h3>
-            <p class="text-white/40 text-sm leading-relaxed">نظام XP، مستويات، شارات إنجاز — كل جلسة تقربك من الإنجاز التالي.</p>
-          </div>
-        </div>
-        <div class="feature-card group relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-[#FFC800]/[0.15] transition-all duration-500 cursor-default">
-          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <div class="relative">
-            <span class="text-3xl">🎨</span>
-            <h3 class="text-lg font-bold mt-4 mb-2">10 ثيمات احترافية</h3>
-            <p class="text-white/40 text-sm leading-relaxed">5 غامقة + 5 فاتحة بتصميم بيج فاخر — ألوان أكسنت مميزة لكل ذوق.</p>
-          </div>
-        </div>
-        <div class="feature-card group relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-[#FFC800]/[0.15] transition-all duration-500 cursor-default">
-          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <div class="relative">
-            <span class="text-3xl">🤖</span>
-            <h3 class="text-lg font-bold mt-4 mb-2">نصائح ذكية</h3>
-            <p class="text-white/40 text-sm leading-relaxed">مدمجة بدون إنترنت — مخصصة لكل درس وتمرين. لا حاجة لاتصال دائم.</p>
-          </div>
-        </div>
-        <div class="feature-card group relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-[#FFC800]/[0.15] transition-all duration-500 cursor-default">
-          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <div class="relative">
-            <span class="text-3xl">💽</span>
-            <h3 class="text-lg font-bold mt-4 mb-2">SQLite مدمجة</h3>
-            <p class="text-white/40 text-sm leading-relaxed">قاعدة بيانات محلية دائمة — لا فقدان للبيانات. كل تقدمك محفوظ.</p>
-          </div>
-        </div>
-        <div class="feature-card group relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-[#FFC800]/[0.15] transition-all duration-500 cursor-default">
-          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <div class="relative">
-            <span class="text-3xl">🌙</span>
-            <h3 class="text-lg font-bold mt-4 mb-2">وضع مظلم / فاتح</h3>
-            <p class="text-white/40 text-sm leading-relaxed">تبديل فوري بين 5 ثيمات غامقة و 5 فاتحة — يناسب كل الأوقات.</p>
-          </div>
-        </div>
+      <div class="features-grid" id="featGrid">
+        <div class="feat-card"><div class="feat-icon">📚</div><h3>40 درساً نظرياً</h3><p>20 عربي + 20 إنجليزي — من المفاتيح الرئيسية إلى تقنيات السرعة المتقدمة.</p></div>
+        <div class="feat-card"><div class="feat-icon">⌨️</div><h3>210+ تمرين عملي</h3><p>10 مجموعات، 3 مستويات صعوبة، تمارين تصاعدية تغطي كل جوانب الطباعة.</p></div>
+        <div class="feat-card"><div class="feat-icon">🎮</div><h3>5 ألعاب تفاعلية</h3><p>الكلمات المتساقطة • قناص مسافة • نينجا الحروف • ذاكرة الطباعة • سباق السرعة.</p></div>
+        <div class="feat-card"><div class="feat-icon">📊</div><h3>إحصائيات متقدمة</h3><p>WPM، الدقة، الأخطاء، رسوم بيانية أسبوعية، Streak الأيام — تتبع كل تقدمك.</p></div>
+        <div class="feat-card"><div class="feat-icon">🏆</div><h3>10+ إنجازات</h3><p>نظام XP، مستويات، شارات إنجاز — كل جلسة تقربك من الإنجاز التالي.</p></div>
+        <div class="feat-card"><div class="feat-icon">🎨</div><h3>10 ثيمات احترافية</h3><p>5 غامقة + 5 فاتحة بتصميم بيج فاخر — ألوان أكسنت مميزة لكل ذوق.</p></div>
+        <div class="feat-card"><div class="feat-icon">🤖</div><h3>نصائح ذكية مدمجة</h3><p>مدمجة بدون إنترنت — مخصصة لكل درس وتمرين. لا حاجة لاتصال دائم بالإنترنت.</p></div>
+        <div class="feat-card"><div class="feat-icon">💽</div><h3>SQLite مدمجة</h3><p>قاعدة بيانات محلية دائمة — لا فقدان للبيانات. كل تقدمك محفوظ بشكل آمن.</p></div>
+        <div class="feat-card"><div class="feat-icon">🌙</div><h3>وضع مظلم / فاتح</h3><p>تبديل فوري بين 5 ثيمات غامقة و 5 فاتحة — يناسب كل الأوقات والأذواق.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- ===== SCREENSHOTS GALLERY ===== -->
-  <section id="screenshots" class="relative py-24 md:py-32 px-6 bg-[#0D0F17]">
-    <div class="max-w-7xl mx-auto">
-      <div class="text-center mb-16 md:mb-20 opacity-0" id="screenshots-header">
-        <span class="text-[#FFC800]/60 text-sm font-semibold tracking-widest uppercase">Gallery</span>
-        <h2 class="text-3xl md:text-5xl font-black mt-3">لقطات الشاشة</h2>
-        <p class="text-white/30 text-lg mt-3 max-w-xl mx-auto">تصميم عصري ونظيف يعكس جودة التطبيق</p>
+  <!-- ===== SCREENSHOTS ===== -->
+  <section id="screenshots" style="padding:80px 24px; background:var(--bg-raised);">
+    <div style="max-width:1280px; margin:0 auto;">
+      <div style="text-align:center; margin-bottom:60px; opacity:0;" id="shotHeader">
+        <div class="section-label" style="margin:0 auto 16px;"><span></span>Gallery</div>
+        <h2 class="section-title">لقطات الشاشة</h2>
+        <p class="section-sub" style="margin:0 auto;">تصميم عصري ونظيف يعكس جودة التطبيق وتجربة المستخدم</p>
       </div>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="screenshots-grid">
-        <div class="screenshot-card group relative rounded-2xl overflow-hidden border border-white/[0.06] bg-white/[0.02] transition-all duration-500 hover:border-[#FFC800]/[0.2] hover:shadow-2xl hover:shadow-[#FFC800]/[0.05]">
-          <div class="aspect-[4/3] overflow-hidden">
-            <img src="../img/dashboard.png" alt="Dashboard" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-          </div>
-          <div class="p-4 flex items-center justify-between">
-            <span class="text-sm font-semibold text-white/80">📊 لوحة التحكم</span>
-            <span class="text-xs text-white/20 font-mono">Dashboard</span>
-          </div>
+      <div class="screenshot-grid" id="shotGrid">
+        <div class="shot-card" onclick="openLightbox('../img/dashboard.png')">
+          <img src="../img/dashboard.png" alt="Dashboard" loading="lazy">
+          <div class="overlay"></div>
+          <div class="label">📊 لوحة التحكم</div>
         </div>
-        <div class="screenshot-card group relative rounded-2xl overflow-hidden border border-white/[0.06] bg-white/[0.02] transition-all duration-500 hover:border-[#FFC800]/[0.2] hover:shadow-2xl hover:shadow-[#FFC800]/[0.05]">
-          <div class="aspect-[4/3] overflow-hidden">
-            <img src="../img/lessons.png" alt="Lessons" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-          </div>
-          <div class="p-4 flex items-center justify-between">
-            <span class="text-sm font-semibold text-white/80">📚 الدروس النظرية</span>
-            <span class="text-xs text-white/20 font-mono">Lessons</span>
-          </div>
+        <div class="shot-card" onclick="openLightbox('../img/lessons.png')">
+          <img src="../img/lessons.png" alt="Lessons" loading="lazy">
+          <div class="overlay"></div>
+          <div class="label">📚 الدروس النظرية</div>
         </div>
-        <div class="screenshot-card group relative rounded-2xl overflow-hidden border border-white/[0.06] bg-white/[0.02] transition-all duration-500 hover:border-[#FFC800]/[0.2] hover:shadow-2xl hover:shadow-[#FFC800]/[0.05]">
-          <div class="aspect-[4/3] overflow-hidden">
-            <img src="../img/exercises.png" alt="Exercises" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-          </div>
-          <div class="p-4 flex items-center justify-between">
-            <span class="text-sm font-semibold text-white/80">⌨️ اختيار التمارين</span>
-            <span class="text-xs text-white/20 font-mono">Exercises</span>
-          </div>
+        <div class="shot-card" onclick="openLightbox('../img/exercises.png')">
+          <img src="../img/exercises.png" alt="Exercises" loading="lazy">
+          <div class="overlay"></div>
+          <div class="label">⌨️ التمارين</div>
         </div>
-        <div class="screenshot-card group relative rounded-2xl overflow-hidden border border-white/[0.06] bg-white/[0.02] transition-all duration-500 hover:border-[#FFC800]/[0.2] hover:shadow-2xl hover:shadow-[#FFC800]/[0.05]">
-          <div class="aspect-[4/3] overflow-hidden">
-            <img src="../img/games.png" alt="Games" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-          </div>
-          <div class="p-4 flex items-center justify-between">
-            <span class="text-sm font-semibold text-white/80">🎮 الألعاب التفاعلية</span>
-            <span class="text-xs text-white/20 font-mono">Games</span>
-          </div>
+        <div class="shot-card" onclick="openLightbox('../img/games.png')">
+          <img src="../img/games.png" alt="Games" loading="lazy">
+          <div class="overlay"></div>
+          <div class="label">🎮 الألعاب</div>
         </div>
-        <div class="screenshot-card group relative rounded-2xl overflow-hidden border border-white/[0.06] bg-white/[0.02] transition-all duration-500 hover:border-[#FFC800]/[0.2] hover:shadow-2xl hover:shadow-[#FFC800]/[0.05]">
-          <div class="aspect-[4/3] overflow-hidden">
-            <img src="../img/profile.png" alt="Profile" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-          </div>
-          <div class="p-4 flex items-center justify-between">
-            <span class="text-sm font-semibold text-white/80">🏆 الملف الشخصي</span>
-            <span class="text-xs text-white/20 font-mono">Profile</span>
-          </div>
+        <div class="shot-card" onclick="openLightbox('../img/profile.png')">
+          <img src="../img/profile.png" alt="Profile" loading="lazy">
+          <div class="overlay"></div>
+          <div class="label">🏆 الملف الشخصي</div>
         </div>
-        <div class="screenshot-card group relative rounded-2xl overflow-hidden border border-white/[0.06] bg-white/[0.02] transition-all duration-500 hover:border-[#FFC800]/[0.2] hover:shadow-2xl hover:shadow-[#FFC800]/[0.05]">
-          <div class="aspect-[4/3] overflow-hidden">
-            <img src="../img/settings.png" alt="Settings" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-          </div>
-          <div class="p-4 flex items-center justify-between">
-            <span class="text-sm font-semibold text-white/80">⚙️ الإعدادات</span>
-            <span class="text-xs text-white/20 font-mono">Settings</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== GAMES ===== -->
-  <section id="games" class="relative py-24 md:py-32 px-6 overflow-hidden">
-    <div class="absolute inset-0 pointer-events-none">
-      <div class="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-[#FFC800] opacity-[0.015] blur-[100px]"></div>
-    </div>
-    <div class="max-w-7xl mx-auto relative">
-      <div class="text-center mb-16 md:mb-20 opacity-0" id="games-header">
-        <span class="text-[#FFC800]/60 text-sm font-semibold tracking-widest uppercase">Games</span>
-        <h2 class="text-3xl md:text-5xl font-black mt-3">ألعاب تفاعلية</h2>
-        <p class="text-white/30 text-lg mt-3 max-w-xl mx-auto">تعلّم بدون ملل — 5 ألعاب مصممة لتحسين سرعتك ودقتك</p>
-      </div>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5" id="games-grid">
-        <div class="game-card group relative p-6 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.04] to-transparent border border-[#FFC800]/[0.08] hover:border-[#FFC800]/[0.2] transition-all duration-500 cursor-default">
-          <div class="text-4xl mb-4">🌊</div>
-          <h3 class="text-lg font-bold mb-2">الكلمات المتساقطة</h3>
-          <p class="text-white/40 text-sm leading-relaxed">كلمات تسقط من الأعلى — اكتبها قبل أن تصل للأرض. تدريب على السرعة ورد الفعل.</p>
-        </div>
-        <div class="game-card group relative p-6 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.04] to-transparent border border-[#FFC800]/[0.08] hover:border-[#FFC800]/[0.2] transition-all duration-500 cursor-default">
-          <div class="text-4xl mb-4">🎯</div>
-          <h3 class="text-lg font-bold mb-2">قناص مسافة</h3>
-          <p class="text-white/40 text-sm leading-relaxed">كلمات تظهر عشوائياً — أصبها قبل اختفائها. دقة وتركيز في كل طلقة.</p>
-        </div>
-        <div class="game-card group relative p-6 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.04] to-transparent border border-[#FFC800]/[0.08] hover:border-[#FFC800]/[0.2] transition-all duration-500 cursor-default">
-          <div class="text-4xl mb-4">🥷</div>
-          <h3 class="text-lg font-bold mb-2">نينجا الحروف</h3>
-          <p class="text-white/40 text-sm leading-relaxed">الحروف تقفز وتختفي — اكتبها في الوقت المحدد. سرعة رد فعل قصوى.</p>
-        </div>
-        <div class="game-card group relative p-6 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.04] to-transparent border border-[#FFC800]/[0.08] hover:border-[#FFC800]/[0.2] transition-all duration-500 cursor-default">
-          <div class="text-4xl mb-4">🧠</div>
-          <h3 class="text-lg font-bold mb-2">ذاكرة الطباعة</h3>
-          <p class="text-white/40 text-sm leading-relaxed">الكلمة تظهر ثم تختفي — اكتبها من الذاكرة. تقوية الذاكرة العضلية.</p>
-        </div>
-        <div class="game-card group relative p-6 rounded-2xl bg-gradient-to-br from-[#FFC800]/[0.04] to-transparent border border-[#FFC800]/[0.08] hover:border-[#FFC800]/[0.2] transition-all duration-500 cursor-default lg:col-span-1 md:col-span-2 md:max-w-[50%] md:mx-auto lg:max-w-none lg:col-span-1 lg:mx-0">
-          <div class="text-4xl mb-4">🏎️</div>
-          <h3 class="text-lg font-bold mb-2">سباق السرعة</h3>
-          <p class="text-white/40 text-sm leading-relaxed">سباق مع الزمن — أكتب أكبر عدد من الكلمات الصحيحة. تحمل وسرعة في آن واحد.</p>
+        <div class="shot-card" onclick="openLightbox('../img/settings.png')">
+          <img src="../img/settings.png" alt="Settings" loading="lazy">
+          <div class="overlay"></div>
+          <div class="label">⚙️ الإعدادات</div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ===== STATS ===== -->
-  <section id="stats" class="relative py-24 md:py-32 px-6 bg-[#0D0F17]">
-    <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-16 md:mb-20 opacity-0" id="stats-header">
-        <span class="text-[#FFC800]/60 text-sm font-semibold tracking-widest uppercase">By the Numbers</span>
-        <h2 class="text-3xl md:text-5xl font-black mt-3">إحصائيات المشروع</h2>
+  <section id="stats" style="padding:80px 24px;">
+    <div style="max-width:1280px; margin:0 auto;">
+      <div style="text-align:center; margin-bottom:60px; opacity:0;" id="statsHeader">
+        <div class="section-label" style="margin:0 auto 16px;"><span></span>By the Numbers</div>
+        <h2 class="section-title">إحصائيات المشروع</h2>
       </div>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6" id="stats-grid">
-        <div class="stat-card relative p-8 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-center" data-target="15">
-          <div class="text-4xl md:text-5xl font-black bg-gradient-to-b from-[#FFC800] to-[#FFA000] bg-clip-text text-transparent"><span class="counter" data-target="15">0</span>K+</div>
-          <div class="text-white/40 text-sm mt-2 font-semibold">سطر كود</div>
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-item">
+          <div class="stat-ring">
+            <svg width="80" height="80" viewBox="0 0 80 80">
+              <defs><linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FFC800"/><stop offset="100%" stop-color="#FFA000"/></linearGradient></defs>
+              <circle class="bg" cx="40" cy="40" r="35"/>
+              <circle class="fg" id="ring1" cx="40" cy="40" r="35" style="--target:44"/>
+            </svg>
+            <div class="stat-val"><span class="counter" data-target="15">0</span><span style="font-size:0.6rem;">K+</span></div>
+          </div>
+          <div class="stat-label">سطر كود</div>
         </div>
-        <div class="stat-card relative p-8 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-center" data-target="210">
-          <div class="text-4xl md:text-5xl font-black bg-gradient-to-b from-[#FFC800] to-[#FFA000] bg-clip-text text-transparent"><span class="counter" data-target="210">0</span>+</div>
-          <div class="text-white/40 text-sm mt-2 font-semibold">تمرين عملي</div>
+        <div class="stat-item">
+          <div class="stat-ring">
+            <svg width="80" height="80" viewBox="0 0 80 80">
+              <circle class="bg" cx="40" cy="40" r="35"/>
+              <circle class="fg" id="ring2" cx="40" cy="40" r="35" style="--target:22"/>
+            </svg>
+            <div class="stat-val"><span class="counter" data-target="210">0</span><span style="font-size:0.6rem;">+</span></div>
+          </div>
+          <div class="stat-label">تمرين عملي</div>
         </div>
-        <div class="stat-card relative p-8 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-center" data-target="40">
-          <div class="text-4xl md:text-5xl font-black bg-gradient-to-b from-[#FFC800] to-[#FFA000] bg-clip-text text-transparent"><span class="counter" data-target="40">0</span></div>
-          <div class="text-white/40 text-sm mt-2 font-semibold">درس نظري</div>
+        <div class="stat-item">
+          <div class="stat-ring">
+            <svg width="80" height="80" viewBox="0 0 80 80">
+              <circle class="bg" cx="40" cy="40" r="35"/>
+              <circle class="fg" id="ring3" cx="40" cy="40" r="35" style="--target:110"/>
+            </svg>
+            <div class="stat-val"><span class="counter" data-target="40">0</span></div>
+          </div>
+          <div class="stat-label">درس نظري</div>
         </div>
-        <div class="stat-card relative p-8 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-center" data-target="5">
-          <div class="text-4xl md:text-5xl font-black bg-gradient-to-b from-[#FFC800] to-[#FFA000] bg-clip-text text-transparent"><span class="counter" data-target="5">0</span></div>
-          <div class="text-white/40 text-sm mt-2 font-semibold">ألعاب تفاعلية</div>
+        <div class="stat-item">
+          <div class="stat-ring">
+            <svg width="80" height="80" viewBox="0 0 80 80">
+              <circle class="bg" cx="40" cy="40" r="35"/>
+              <circle class="fg" id="ring4" cx="40" cy="40" r="35" style="--target:154"/>
+            </svg>
+            <div class="stat-val"><span class="counter" data-target="5">0</span></div>
+          </div>
+          <div class="stat-label">ألعاب تفاعلية</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== ARCHITECTURE ===== -->
-  <section class="relative py-24 md:py-32 px-6 overflow-hidden">
-    <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-16 opacity-0" id="arch-header">
-        <span class="text-[#FFC800]/60 text-sm font-semibold tracking-widest uppercase">Architecture</span>
-        <h2 class="text-3xl md:text-5xl font-black mt-3">الهندسة التقنية</h2>
+  <!-- ===== GAMES ===== -->
+  <section id="games" style="padding:80px 24px; background:var(--bg-raised);">
+    <div style="max-width:1280px; margin:0 auto;">
+      <div style="text-align:center; margin-bottom:60px; opacity:0;" id="gamesHeader">
+        <div class="section-label" style="margin:0 auto 16px;"><span></span>Games</div>
+        <h2 class="section-title">ألعاب تفاعلية<br><span class="gold-text">لتعلم ممتع</span></h2>
+        <p class="section-sub" style="margin:0 auto;">تعلّم بدون ملل — 5 ألعاب مصممة لتحسين سرعتك ودقتك</p>
       </div>
-      <div class="flex flex-wrap justify-center gap-6 opacity-0" id="arch-content">
-        <div class="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-center min-w-[140px]">
-          <div class="text-2xl mb-2">⚛️</div>
-          <div class="font-bold text-sm">React 19</div>
-          <div class="text-white/30 text-xs mt-1 font-mono">Frontend</div>
+      <div class="games-grid" id="gamesGrid">
+        <div class="game-card"><div class="game-emoji">🌊</div><h3>الكلمات المتساقطة</h3><p>كلمات تسقط من الأعلى — اكتبها قبل أن تصل للأرض. تدريب على السرعة ورد الفعل.</p></div>
+        <div class="game-card"><div class="game-emoji">🎯</div><h3>قناص مسافة</h3><p>كلمات تظهر عشوائياً — أصبها قبل اختفائها. دقة وتركيز في كل طلقة.</p></div>
+        <div class="game-card"><div class="game-emoji">🥷</div><h3>نينجا الحروف</h3><p>الحروف تقفز وتختفي — اكتبها في الوقت المحدد. سرعة رد فعل قصوى.</p></div>
+        <div class="game-card"><div class="game-emoji">🧠</div><h3>ذاكرة الطباعة</h3><p>الكلمة تظهر ثم تختفي — اكتبها من الذاكرة. تقوية الذاكرة العضلية.</p></div>
+        <div class="game-card"><div class="game-emoji">🏎️</div><h3>سباق السرعة</h3><p>سباق مع الزمن — أكتب أكبر عدد من الكلمات الصحيحة. تحمل وسرعة معاً.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ARCHITECTURE ===== -->
+  <section style="padding:80px 24px;">
+    <div style="max-width:960px; margin:0 auto;">
+      <div style="text-align:center; margin-bottom:60px; opacity:0;" id="archHeader">
+        <div class="section-label" style="margin:0 auto 16px;"><span></span>Architecture</div>
+        <h2 class="section-title">الهندسة التقنية</h2>
+        <p class="section-sub" style="margin:0 auto;">React → Tauri IPC → Rust → SQLite — تصميم نظيف وأداء عالٍ</p>
+      </div>
+      <div class="arch-flow" id="archFlow">
+        <div class="arch-node"><div class="emoji">⚛️</div><div class="name">React 19</div><div class="desc">Frontend</div></div>
+        <div class="arch-arrow">←</div>
+        <div class="arch-node"><div class="emoji">🔄</div><div class="name">Tauri IPC</div><div class="desc">invoke()</div></div>
+        <div class="arch-arrow">←</div>
+        <div class="arch-node"><div class="emoji">🦀</div><div class="name">Rust</div><div class="desc">30 Commands</div></div>
+        <div class="arch-arrow">←</div>
+        <div class="arch-node"><div class="emoji">🗄️</div><div class="name">SQLite</div><div class="desc">7 Tables</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ROADMAP ===== -->
+  <section id="roadmap" style="padding:80px 24px; background:var(--bg-raised);">
+    <div style="max-width:640px; margin:0 auto;">
+      <div style="text-align:center; margin-bottom:60px; opacity:0;" id="roadmapHeader">
+        <div class="section-label" style="margin:0 auto 16px;"><span></span>Roadmap</div>
+        <h2 class="section-title">خريطة الطريق</h2>
+      </div>
+      <div class="roadmap" id="roadmapList">
+        <div class="roadmap-item"><div class="tag">v1.1 — قريباً</div><h4>macOS & Linux</h4><p>دعم أنظمة التشغيل الأخرى + تحدي يومي + تصدير الإحصائيات CSV/PDF + تحليل كل إصبع.</p></div>
+        <div class="roadmap-item"><div class="tag">v1.2 — مخطط</div><h4>حسابات متعددة</h4><p>Multi-profile، متجر مجتمعي للتمارين، وضع التدريب العميق، دعم Dvorak/Colemak.</p></div>
+        <div class="roadmap-item"><div class="tag">v2.0 — طموح</div><h4>تنافس متعدد اللاعبين</h4><p>Competitive Multiplayer، واجهة HTML/CSS، Course Builder، تكامل مع GitHub API.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section id="faq" style="padding:80px 24px;">
+    <div style="max-width:640px; margin:0 auto;">
+      <div style="text-align:center; margin-bottom:60px; opacity:0;" id="faqHeader">
+        <div class="section-label" style="margin:0 auto 16px;"><span></span>FAQ</div>
+        <h2 class="section-title">الأسئلة الشائعة</h2>
+      </div>
+      <div id="faqList">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">كيف أحمل التطبيق؟ <span>+</span></div>
+          <div class="faq-a">اذهب إلى صفحة Releases على GitHub، حمّل TypoMaster_1.0.0_x64_en-US.msi، ثم شغّله. سهل وسريع.</div>
         </div>
-        <div class="flex items-center text-white/20 text-2xl font-thin hidden md:block pt-8">→</div>
-        <div class="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-center min-w-[140px]">
-          <div class="text-2xl mb-2">🔄</div>
-          <div class="font-bold text-sm">Tauri IPC</div>
-          <div class="text-white/30 text-xs mt-1 font-mono">invoke()</div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">هل التطبيق متوفر لأنظمة أخرى؟ <span>+</span></div>
+          <div class="faq-a">حالياً Windows فقط. دعم macOS و Linux قادم في الإصدار 1.1. يمكنك بناء التطبيق من المصدر لأي نظام.</div>
         </div>
-        <div class="flex items-center text-white/20 text-2xl font-thin hidden md:block pt-8">→</div>
-        <div class="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-center min-w-[140px]">
-          <div class="text-2xl mb-2">🦀</div>
-          <div class="font-bold text-sm">Rust</div>
-          <div class="text-white/30 text-xs mt-1 font-mono">30 Commands</div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">هل أحتاج اتصال إنترنت لاستخدامه؟ <span>+</span></div>
+          <div class="faq-a">لا. TypoMaster يعمل بشكل كامل بدون إنترنت. النصائح الذكية مدمجة في التطبيق. الإنترنت مطلوب فقط للتحميل الأولي.</div>
         </div>
-        <div class="flex items-center text-white/20 text-2xl font-thin hidden md:block pt-8">→</div>
-        <div class="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-center min-w-[140px]">
-          <div class="text-2xl mb-2">🗄️</div>
-          <div class="font-bold text-sm">SQLite</div>
-          <div class="text-white/30 text-xs mt-1 font-mono">7 Tables</div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">كيف أعيد تعيين كل البيانات؟ <span>+</span></div>
+          <div class="faq-a">الإعدادات ← متقدم ← إعادة تعيين كل البيانات، أو احذف ملف قاعدة البيانات من %APPDATA%/com.typomaster.desktop/TypoMaster.db.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">الموسيقى لا تعمل؟ <span>+</span></div>
+          <div class="faq-a">تأكد من وجود ملفات public/music/track-1.mp3 إلى track-10.mp3. إذا كانت مفقودة، أعد بناء التطبيق أو حمّل الموسيقى من GitHub.</div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ===== CTA ===== -->
-  <section class="relative py-24 md:py-32 px-6 bg-[#0D0F17] overflow-hidden">
-    <div class="absolute inset-0 pointer-events-none">
-      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#FFC800] opacity-[0.02] blur-[120px]"></div>
+  <section class="cta-section" id="cta">
+    <div class="cta-bg">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
     </div>
-    <div class="max-w-3xl mx-auto text-center relative">
-      <div class="opacity-0" id="cta-content">
-        <span class="text-[#FFC800]/60 text-sm font-semibold tracking-widest uppercase">Get Started</span>
-        <h2 class="text-3xl md:text-5xl font-black mt-4 mb-6">ابدأ رحلة الإتقان الآن</h2>
-        <p class="text-white/40 text-lg mb-10 max-w-lg mx-auto">TypoMaster هو الرفيق المثالي لتطوير مهارات الطباعة — سواء كنت مبتدئاً أو محترفاً.</p>
-        <div class="flex flex-wrap justify-center gap-4">
-          <a href="https://github.com/alhmli70/typomaster/releases" class="px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#FFC800] to-[#FFA000] text-[#0F111A] font-bold text-base shadow-2xl shadow-[#FFC800]/25 hover:shadow-[#FFC800]/40 transition-all hover:translate-y-[-2px] inline-flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            تحميل مجاني
-          </a>
-          <a href="https://github.com/alhmli70/typomaster" class="px-8 py-3.5 rounded-xl border border-white/[0.1] bg-white/[0.03] text-white/80 font-semibold hover:bg-white/[0.06] hover:text-white transition-all inline-flex items-center gap-2">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
-            GitHub
-          </a>
-        </div>
+    <div style="max-width:640px; margin:0 auto; position:relative; z-index:2; opacity:0;" id="ctaContent">
+      <div class="section-label" style="margin:0 auto 16px; width:fit-content;"><span></span>Get Started</div>
+      <h2 class="section-title" style="font-size:clamp(2rem,4vw,3rem);">ابدأ رحلة الإتقان الآن</h2>
+      <p style="color:var(--text-muted); font-size:1.05rem; margin-bottom:36px; line-height:1.8;">TypoMaster هو الرفيق المثالي لتطوير مهارات الطباعة — سواء كنت مبتدئاً أو محترفاً.</p>
+      <div style="display:flex; flex-wrap:wrap; gap:12px; justify-content:center;">
+        <a href="https://github.com/alhmli70/typomaster/releases" class="btn-primary">تحميل مجاني</a>
+        <a href="https://github.com/alhmli70/typomaster" class="btn-secondary">GitHub</a>
       </div>
     </div>
   </section>
 
   <!-- ===== FOOTER ===== -->
-  <footer class="border-t border-white/[0.04] py-8 px-6">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2 text-white/20 text-sm">
-        <span class="w-6 h-6 rounded-md bg-gradient-to-br from-[#FFC800] to-[#FFA000] flex items-center justify-center text-[#0F111A] font-black text-xs">T</span>
-        <span>TypoMaster — MIT License</span>
+  <footer>
+    <div class="footer-inner">
+      <div class="copy">
+        <span class="mark">T</span>
+        TypoMaster — <span style="color:var(--text-muted);">MIT License</span>
       </div>
-      <div class="flex items-center gap-6 text-sm">
-        <a href="https://github.com/alhmli70/typomaster" class="text-white/30 hover:text-white/60 transition-colors">GitHub</a>
-        <a href="https://github.com/alhmli70/typomaster/releases" class="text-white/30 hover:text-white/60 transition-colors">Releases</a>
-        <a href="https://github.com/alhmli70/typomaster/blob/main/LICENSE" class="text-white/30 hover:text-white/60 transition-colors">License</a>
-        <a href="https://github.com/alhmli70/typomaster/blob/main/RELEASE_NOTES.md" class="text-white/30 hover:text-white/60 transition-colors">Release Notes</a>
+      <div class="footer-links">
+        <a href="https://github.com/alhmli70/typomaster">GitHub</a>
+        <a href="https://github.com/alhmli70/typomaster/releases">Releases</a>
+        <a href="https://github.com/alhmli70/typomaster/blob/main/LICENSE">License</a>
+        <a href="https://github.com/alhmli70/typomaster/blob/main/RELEASE_NOTES.md">Release Notes</a>
       </div>
-      <div class="text-white/20 text-sm">
-        Built with <span class="text-[#FFC800]">❤️</span> — React + Tauri + Rust
-      </div>
+      <div class="footer-made">Built with <span style="color:var(--gold);">❤️</span> — React + Tauri + Rust</div>
     </div>
   </footer>
 
   <script>
-    // === GSAP Animations ===
-    document.addEventListener('DOMContentLoaded', () => {
-      const hasGSAP = typeof gsap !== 'undefined';
+    // === LIGHTBOX ===
+    function openLightbox(src) {
+      document.getElementById('lightbox-img').src = src;
+      document.getElementById('lightbox').classList.add('open');
+    }
+    function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+    document.addEventListener('keydown', e => { if(e.key === 'Escape') closeLightbox(); });
 
-      if (!hasGSAP) {
-        document.querySelectorAll('.opacity-0').forEach(el => el.classList.remove('opacity-0'));
+    // === FAQ ===
+    function toggleFaq(el) {
+      el.classList.toggle('open');
+    }
+
+    // === GSAP ===
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof gsap === 'undefined') {
+        document.querySelectorAll('[style*="opacity:0"]').forEach(el => el.style.opacity = '1');
         return;
       }
-
       gsap.registerPlugin(ScrollTrigger);
 
+      // Navbar scroll
+      ScrollTrigger.create({
+        start: 'top -60px',
+        onUpdate: self => {
+          document.getElementById('navbar').classList.toggle('scrolled', self.progress > 0);
+        }
+      });
+
       // Hero
-      gsap.to('#hero-badge', { opacity: 1, y: 0, duration: 0.6, delay: 0.2 });
-      gsap.to('#hero-title', { opacity: 1, y: 0, duration: 0.8, delay: 0.4 });
-      gsap.to('#hero-desc', { opacity: 1, y: 0, duration: 0.8, delay: 0.6 });
-      gsap.to('#hero-cta', { opacity: 1, y: 0, duration: 0.8, delay: 0.8 });
-      gsap.to('#hero-tech', { opacity: 1, y: 0, duration: 0.6, delay: 1.0 });
+      const heroTL = gsap.timeline({ defaults: { ease: 'power3.out' } });
+      heroTL
+        .to('#heroBadge', { opacity: 1, y: 0, duration: 0.6 })
+        .to('#heroTitle', { opacity: 1, y: 0, duration: 0.8 }, '-=0.3')
+        .to('#heroDesc', { opacity: 1, y: 0, duration: 0.8 }, '-=0.4')
+        .to('#heroActions', { opacity: 1, y: 0, duration: 0.8 }, '-=0.5')
+        .to('#heroTech', { opacity: 1, y: 0, duration: 0.6 }, '-=0.4')
+        .to('#heroMockup', { opacity: 1, x: 0, duration: 1, ease: 'power2.out' }, '-=0.8');
 
       // Features
-      gsap.from('#features-header', {
-        opacity: 0, y: 60, duration: 0.8,
-        scrollTrigger: { trigger: '#features', start: 'top 70%' }
-      });
-      gsap.from('.feature-card', {
-        opacity: 0, y: 40, duration: 0.6, stagger: 0.08,
-        scrollTrigger: { trigger: '#features-grid', start: 'top 80%' }
-      });
+      gsap.from('#featHeader', { opacity: 0, y: 60, duration: 0.8, scrollTrigger: { trigger: '#features', start: 'top 70%' } });
+      gsap.from('.feat-card', { opacity: 0, y: 40, duration: 0.6, stagger: 0.06, scrollTrigger: { trigger: '#featGrid', start: 'top 80%' } });
 
-      // Screenshots header
-      gsap.from('#screenshots-header', {
-        opacity: 0, y: 60, duration: 0.8,
-        scrollTrigger: { trigger: '#screenshots', start: 'top 70%' }
-      });
-      gsap.from('.screenshot-card', {
-        opacity: 0, y: 40, duration: 0.6, stagger: 0.1,
-        scrollTrigger: { trigger: '#screenshots-grid', start: 'top 80%' }
+      // Screenshots
+      gsap.from('#shotHeader', { opacity: 0, y: 60, duration: 0.8, scrollTrigger: { trigger: '#screenshots', start: 'top 70%' } });
+      gsap.from('.shot-card', { opacity: 0, y: 40, duration: 0.6, stagger: 0.08, scrollTrigger: { trigger: '#shotGrid', start: 'top 80%' } });
+
+      // Stats
+      gsap.from('#statsHeader', { opacity: 0, y: 60, duration: 0.8, scrollTrigger: { trigger: '#stats', start: 'top 70%' } });
+      gsap.from('.stat-item', { opacity: 0, y: 40, duration: 0.6, stagger: 0.1, scrollTrigger: { trigger: '#statsGrid', start: 'top 80%' } });
+
+      // Counter + ring animation
+      ScrollTrigger.create({
+        trigger: '#statsGrid',
+        start: 'top 80%',
+        once: true,
+        onEnter: () => {
+          document.querySelectorAll('.counter').forEach(c => {
+            const target = parseInt(c.dataset.target);
+            const dur = 2000;
+            const start = performance.now();
+            function update(t) {
+              const p = Math.min((t - start) / dur, 1);
+              const e = 1 - Math.pow(1 - p, 3);
+              c.textContent = Math.floor(e * target);
+              if (p < 1) requestAnimationFrame(update);
+            }
+            requestAnimationFrame(update);
+          });
+          document.querySelectorAll('.stat-ring .fg').forEach(r => { r.classList.add('visible'); });
+        }
       });
 
       // Games
-      gsap.from('#games-header', {
-        opacity: 0, y: 60, duration: 0.8,
-        scrollTrigger: { trigger: '#games', start: 'top 70%' }
-      });
-      gsap.from('.game-card', {
-        opacity: 0, y: 40, duration: 0.6, stagger: 0.1,
-        scrollTrigger: { trigger: '#games-grid', start: 'top 80%' }
-      });
-
-      // Stats
-      gsap.from('#stats-header', {
-        opacity: 0, y: 60, duration: 0.8,
-        scrollTrigger: { trigger: '#stats', start: 'top 70%' }
-      });
-      gsap.from('.stat-card', {
-        opacity: 0, y: 40, duration: 0.6, stagger: 0.12,
-        scrollTrigger: { trigger: '#stats-grid', start: 'top 80%' }
-      });
+      gsap.from('#gamesHeader', { opacity: 0, y: 60, duration: 0.8, scrollTrigger: { trigger: '#games', start: 'top 70%' } });
+      gsap.from('.game-card', { opacity: 0, y: 40, duration: 0.5, stagger: 0.08, scrollTrigger: { trigger: '#gamesGrid', start: 'top 80%' } });
 
       // Architecture
-      gsap.from('#arch-header', {
-        opacity: 0, y: 60, duration: 0.8,
-        scrollTrigger: { trigger: '#arch-header', start: 'top 80%' }
-      });
-      gsap.from('#arch-content', {
-        opacity: 0, y: 40, duration: 0.8, stagger: 0.15,
-        scrollTrigger: { trigger: '#arch-content', start: 'top 80%' }
-      });
+      gsap.from('#archHeader', { opacity: 0, y: 60, duration: 0.8, scrollTrigger: { trigger: '#archHeader', start: 'top 80%' } });
+      gsap.from('.arch-node', { opacity: 0, y: 30, duration: 0.5, stagger: 0.12, scrollTrigger: { trigger: '#archFlow', start: 'top 80%' } });
+
+      // Roadmap
+      gsap.from('#roadmapHeader', { opacity: 0, y: 60, duration: 0.8, scrollTrigger: { trigger: '#roadmap', start: 'top 70%' } });
+      gsap.from('.roadmap-item', { opacity: 0, x: -30, duration: 0.6, stagger: 0.15, scrollTrigger: { trigger: '#roadmapList', start: 'top 80%' } });
+
+      // FAQ
+      gsap.from('#faqHeader', { opacity: 0, y: 60, duration: 0.8, scrollTrigger: { trigger: '#faq', start: 'top 70%' } });
+      gsap.from('.faq-item', { opacity: 0, y: 20, duration: 0.4, stagger: 0.08, scrollTrigger: { trigger: '#faqList', start: 'top 80%' } });
 
       // CTA
-      gsap.from('#cta-content', {
-        opacity: 0, y: 60, duration: 0.8,
-        scrollTrigger: { trigger: '#cta-content', start: 'top 75%' }
-      });
-
-      // === Counter Animation ===
-      function animateCounters() {
-        document.querySelectorAll('.counter').forEach(counter => {
-          const target = parseInt(counter.getAttribute('data-target'));
-          const duration = 2000;
-          const startTime = performance.now();
-
-          function update(currentTime) {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            counter.textContent = Math.floor(eased * target);
-            if (progress < 1) requestAnimationFrame(update);
-          }
-          requestAnimationFrame(update);
-        });
-      }
-
-      ScrollTrigger.create({
-        trigger: '#stats-grid',
-        start: 'top 80%',
-        onEnter: animateCounters,
-        once: true
-      });
-
-      // === Navbar scroll effect ===
-      const navbar = document.getElementById('navbar');
-      ScrollTrigger.create({
-        start: 'top -80px',
-        onUpdate: self => {
-          if (self.progress > 0) {
-            navbar.style.borderColor = 'rgba(255,255,255,0.08)';
-            navbar.style.backgroundColor = 'rgba(15,17,26,0.85)';
-          } else {
-            navbar.style.borderColor = 'transparent';
-            navbar.style.backgroundColor = 'transparent';
-          }
-        }
-      });
+      gsap.from('#ctaContent', { opacity: 0, y: 60, duration: 0.8, scrollTrigger: { trigger: '#ctaContent', start: 'top 75%' } });
     });
 
-    // === Cursor Glow ===
+    // === CURSOR ===
+    const cursor = document.getElementById('cursor');
     document.addEventListener('mousemove', e => {
-      const glow = document.getElementById('cursor-glow');
-      if (glow) {
-        glow.style.left = e.clientX - 300 + 'px';
-        glow.style.top = e.clientY - 300 + 'px';
-      }
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
     });
 
-    // === Smooth scroll for anchor links ===
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', e => {
-        e.preventDefault();
-        const target = document.querySelector(anchor.getAttribute('href'));
-        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
+    // === Hero mockup parallax ===
+    document.querySelector('.mockup-frame')?.addEventListener('mousemove', e => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      if (window.innerWidth > 900) {
+        e.currentTarget.style.transform = `rotateY(${-8 + x * 4}deg) rotateX(${4 - y * 4}deg)`;
+      }
+    });
+    document.querySelector('.mockup-frame')?.addEventListener('mouseleave', e => {
+      if (window.innerWidth > 900) {
+        e.currentTarget.style.transform = 'rotateY(-8deg) rotateX(4deg)';
+      }
     });
   </script>
 </body>
