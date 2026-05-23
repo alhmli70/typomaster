@@ -61,11 +61,11 @@
   <table>
     <tr>
       <td align="center"><b>لوحة التحكم</b></td>
-      <td align="center"><b>واجهة الطباعة</b></td>
+      <td align="center"><b>الدروس النظرية</b></td>
     </tr>
     <tr>
       <td><img src="img/dashboard.png" width="420" alt="Dashboard"></td>
-      <td><img src="img/exercises.png" width="420" alt="Typing Interface"></td>
+      <td><img src="img/lessons.png" width="420" alt="Lessons"></td>
     </tr>
     <tr>
       <td align="center"><b>اختيار التمارين</b></td>
@@ -76,11 +76,11 @@
       <td><img src="img/games.png" width="420" alt="Games"></td>
     </tr>
     <tr>
-      <td align="center"><b>الدروس النظرية</b></td>
+      <td align="center"><b>الملف الشخصي</b></td>
       <td align="center"><b>الإعدادات</b></td>
     </tr>
     <tr>
-      <td><img src="img/lessons.png" width="420" alt="Lessons"></td>
+      <td><img src="img/profile.png" width="420" alt="Profile"></td>
       <td><img src="img/settings.png" width="420" alt="Settings"></td>
     </tr>
   </table>
