@@ -1080,9 +1080,14 @@
     // === FAQ ===
     function toggleFaq(el) { el.classList.toggle('open'); }
 
+    // === SAFETY: visible after 3s regardless ===
+    setTimeout(() => {
+      document.querySelectorAll('[style*="opacity: 0"]').forEach(el => el.style.opacity = '1');
+    }, 3000);
+
     // === GSAP ===
     document.addEventListener('DOMContentLoaded', () => {
-      if (typeof gsap === 'undefined') {
+      if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
         document.querySelectorAll('[style*="opacity"]').forEach(el => el.style.opacity = '1');
         return;
       }
@@ -1106,29 +1111,43 @@
         .from('#heroTech', { y: 20, duration: 0.5 }, '-=0.3')
         .from('#heroMockup', { x: 40, duration: 0.9, ease: 'power2.out' }, '-=0.6');
 
+      // Helper: create scroll-triggered reveal
+      function reveal(el, vars = {}) {
+        const els = typeof el === 'string' ? document.querySelectorAll(el) : [el];
+        if (!els.length) return;
+        const from = { opacity: 0 };
+        if (vars.y !== undefined) from.y = vars.y;
+        else from.y = 30;
+        if (vars.x !== undefined) from.x = vars.x;
+        gsap.set(els, from);
+        const to = { opacity: 1, y: 0, x: 0, duration: vars.dur || 0.5, stagger: vars.stagger || 0, ease: 'power2.out' };
+        to.scrollTrigger = { trigger: vars.trigger || els[0].parentElement || els[0], start: vars.start || 'top 82%', once: true };
+        gsap.to(els, to);
+      }
+
       // About
-      gsap.from('#aboutHeader', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#about', start: 'top 75%' } });
-      gsap.from('#aboutGrid > div', { opacity: 0, y: 30, duration: 0.5, stagger: 0.08, scrollTrigger: { trigger: '#aboutGrid', start: 'top 80%' } });
+      reveal('#aboutHeader', { y: 50, dur: 0.7, trigger: '#about', start: 'top 75%' });
+      reveal('#aboutGrid > div', { stagger: 0.08, trigger: '#aboutGrid' });
 
       // Features
-      gsap.from('#featHeader', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#features', start: 'top 75%' } });
-      gsap.from('.feat-card', { opacity: 0, y: 30, duration: 0.5, stagger: 0.05, scrollTrigger: { trigger: '#featGrid', start: 'top 80%' } });
+      reveal('#featHeader', { y: 50, dur: 0.7, trigger: '#features', start: 'top 75%' });
+      reveal('.feat-card', { stagger: 0.05, trigger: '#featGrid' });
 
       // Detailed features
-      gsap.from('#detailHeader', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#detailHeader', start: 'top 80%' } });
-      gsap.from('.detail-card', { opacity: 0, y: 30, duration: 0.5, stagger: 0.07, scrollTrigger: { trigger: '#detailGrid', start: 'top 80%' } });
+      reveal('#detailHeader', { y: 50, dur: 0.7, trigger: '#detailHeader', start: 'top 80%' });
+      reveal('.detail-card', { stagger: 0.07, trigger: '#detailGrid' });
 
       // Screenshots
-      gsap.from('#shotHeader', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#screenshots', start: 'top 75%' } });
-      gsap.from('.shot-card', { opacity: 0, y: 30, duration: 0.5, stagger: 0.06, scrollTrigger: { trigger: '#shotGrid', start: 'top 80%' } });
+      reveal('#shotHeader', { y: 50, dur: 0.7, trigger: '#screenshots', start: 'top 75%' });
+      reveal('.shot-card', { stagger: 0.06, trigger: '#shotGrid' });
 
       // Themes
-      gsap.from('#themeHeader', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#themeHeader', start: 'top 80%' } });
-      gsap.from('.theme-card', { opacity: 0, y: 20, duration: 0.4, stagger: 0.04, scrollTrigger: { trigger: '#themeGrid', start: 'top 80%' } });
+      reveal('#themeHeader', { y: 50, dur: 0.7, trigger: '#themeHeader', start: 'top 80%' });
+      reveal('.theme-card', { y: 20, stagger: 0.04, trigger: '#themeGrid' });
 
       // Stats
-      gsap.from('#statsHeader', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#stats', start: 'top 75%' } });
-      gsap.from('.stat-card', { opacity: 0, y: 30, duration: 0.5, stagger: 0.08, scrollTrigger: { trigger: '#statsGrid', start: 'top 80%' } });
+      reveal('#statsHeader', { y: 50, dur: 0.7, trigger: '#stats', start: 'top 75%' });
+      reveal('.stat-card', { stagger: 0.08, trigger: '#statsGrid' });
 
       // Counter + ring
       ScrollTrigger.create({
@@ -1152,27 +1171,29 @@
       });
 
       // Games
-      gsap.from('#gamesHeader', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#games', start: 'top 75%' } });
-      gsap.from('.game-card', { opacity: 0, y: 25, duration: 0.4, stagger: 0.06, scrollTrigger: { trigger: '#gamesGrid', start: 'top 80%' } });
+      reveal('#gamesHeader', { y: 50, dur: 0.7, trigger: '#games', start: 'top 75%' });
+      reveal('.game-card', { y: 25, dur: 0.4, stagger: 0.06, trigger: '#gamesGrid' });
 
       // Architecture
-      gsap.from('#archHeader', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#archHeader', start: 'top 80%' } });
-      gsap.from('.arch-node', { opacity: 0, y: 20, duration: 0.4, stagger: 0.1, scrollTrigger: { trigger: '#archFlow', start: 'top 80%' } });
+      reveal('#archHeader', { y: 50, dur: 0.7, trigger: '#archHeader', start: 'top 80%' });
+      reveal('.arch-node', { y: 20, dur: 0.4, stagger: 0.1, trigger: '#archFlow' });
 
       // Roadmap
-      gsap.from('#roadmapHeader', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#roadmap', start: 'top 75%' } });
-      gsap.from('.rm-item', { opacity: 0, x: -20, duration: 0.5, stagger: 0.12, scrollTrigger: { trigger: '#roadmapList', start: 'top 80%' } });
+      reveal('#roadmapHeader', { y: 50, dur: 0.7, trigger: '#roadmap', start: 'top 75%' });
+      reveal('.rm-item', { y: 0, x: -20, dur: 0.5, stagger: 0.12, trigger: '#roadmapList' });
 
       // Download
-      gsap.from('#dlHeader', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#dlHeader', start: 'top 80%' } });
-      gsap.from('#dlGrid > div', { opacity: 0, y: 30, duration: 0.5, stagger: 0.08, scrollTrigger: { trigger: '#dlGrid', start: 'top 80%' } });
+      reveal('#dlHeader', { y: 50, dur: 0.7, trigger: '#dlHeader', start: 'top 80%' });
+      reveal('#dlGrid > div', { stagger: 0.08, trigger: '#dlGrid' });
 
       // FAQ
-      gsap.from('#faqHeader', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#faq', start: 'top 75%' } });
-      gsap.from('.faq-item', { opacity: 0, y: 15, duration: 0.3, stagger: 0.05, scrollTrigger: { trigger: '#faqList', start: 'top 80%' } });
+      reveal('#faqHeader', { y: 50, dur: 0.7, trigger: '#faq', start: 'top 75%' });
+      reveal('.faq-item', { y: 15, dur: 0.3, stagger: 0.05, trigger: '#faqList' });
 
       // CTA
-      gsap.from('#ctaContent', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#ctaContent', start: 'top 75%' } });
+      reveal('#ctaContent', { y: 50, dur: 0.7, trigger: '#ctaContent', start: 'top 75%' });
+
+      ScrollTrigger.refresh();
     });
 
     // === CURSOR ===
