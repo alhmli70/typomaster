@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TypoMaster — أتقن الطباعة</title>
-  <meta name="description" content="برنامج احترافي لتعليم الطباعة بالعربية والإنجليزية — 210+ تمرين، 40 درس، 5 ألعاب، 10 ثيمات. مبني بـ React + Tauri + Rust + SQLite.">
+  <title>TypoMaster — أتقن الطباعة | Professional Typing Trainer</title>
+  <meta name="description" content="TypoMaster: برنامج احترافي مجاني لتعليم الطباعة بالعربية والإنجليزية. 210+ تمرين، 40 درس، 5 ألعاب تفاعلية، 10 ثيمات، تحليلات أداء. مبني بـ React + Tauri + Rust + SQLite.">
+  <meta name="keywords" content="تعليم الطباعة, طباعة عربي, typing tutor, touch typing, Tauri, desktop app, typing master, keyboard trainer, WPM, accuracy">
   <meta property="og:title" content="TypoMaster — أتقن الطباعة">
-  <meta property="og:description" content="Professional bilingual typing trainer. 210+ exercises, 40 lessons, 5 games.">
+  <meta property="og:description" content="Professional bilingual typing trainer. 210+ exercises, 40 lessons, 5 games, 10 themes, real-time analytics. Built with React + Tauri + Rust + SQLite.">
   <meta property="og:image" content="https://raw.githubusercontent.com/alhmli70/typomaster/main/banner.svg">
   <meta property="og:url" content="https://alhmli70.github.io/typomaster">
   <meta name="twitter:card" content="summary_large_image">
@@ -17,53 +18,62 @@
   <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/ScrollTrigger.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/MotionPathPlugin.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300..900&family=JetBrains+Mono:wght@400..700&display=swap');
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
       --bg: #0A0C14;
-      --bg-raised: #0F121C;
-      --surface: #161A2B;
-      --border: rgba(255, 200, 0, 0.06);
+      --bg-raised: #0D101A;
+      --surface: #14182B;
+      --surface-2: #1A1F35;
+      --border: rgba(255, 255, 255, 0.04);
       --gold: #FFC800;
       --gold-2: #FFA000;
+      --gold-dim: rgba(255, 200, 0, 0.08);
       --gold-grad: linear-gradient(135deg, #FFC800, #FFA000);
-      --text: #F0F2F8;
+      --gold-grad-2: linear-gradient(135deg, #FFD700, #FF8C00);
+      --text: #EDF0F7;
       --text-muted: #6B7394;
+      --accent-blue: #4F8CFF;
+      --accent-green: #34D399;
+      --accent-purple: #A78BFA;
       --radius: 16px;
+      --radius-sm: 10px;
     }
+
     html { scroll-behavior: smooth; }
+
     body {
       font-family: 'Cairo', sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
+      line-height: 1.6;
     }
 
-    /* ===== Cursor Glow ===== */
-    #cursor {
-      position: fixed;
-      width: 500px;
-      height: 500px;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 0;
-      background: radial-gradient(circle, rgba(255,200,0,0.04) 0%, transparent 60%);
-      transform: translate(-50%, -50%);
-      transition: left 0.15s ease-out, top 0.15s ease-out;
-      will-change: left, top;
-    }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
 
-    /* ===== Scrollbar ===== */
-    ::-webkit-scrollbar { width: 6px; }
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: rgba(255,200,0,0.15); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(255,200,0,0.3); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,200,0,0.12); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,200,0,0.25); }
 
-    /* ===== Navbar ===== */
+    /* ===== CURSOR GLOW ===== */
+    #cursor-glow {
+      position: fixed; width: 500px; height: 500px; border-radius: 50%;
+      pointer-events: none; z-index: 0;
+      background: radial-gradient(circle, rgba(255,200,0,0.035) 0%, transparent 60%);
+      transform: translate(-50%, -50%);
+      will-change: left, top;
+      transition: left 0.1s, top 0.1s;
+    }
+
+    /* ===== NAVBAR ===== */
     .navbar {
       position: fixed; top: 0; inset-inline: 0; z-index: 100;
       padding: 0 24px; height: 64px;
@@ -71,476 +81,469 @@
       transition: 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     }
     .navbar.scrolled {
-      background: rgba(10, 12, 20, 0.82);
-      backdrop-filter: blur(24px) saturate(1.4);
-      border-bottom: 1px solid rgba(255, 200, 0, 0.06);
-      height: 56px;
+      background: rgba(10, 12, 20, 0.85);
+      backdrop-filter: blur(28px) saturate(1.5);
+      border-bottom: 1px solid rgba(255, 200, 0, 0.05);
     }
     .nav-logo {
       display: flex; align-items: center; gap: 10px;
-      font-weight: 800; font-size: 1.2rem;
-      text-decoration: none; color: var(--text);
+      font-weight: 800; font-size: 1.15rem; color: var(--text);
     }
     .nav-logo-mark {
-      width: 32px; height: 32px;
-      border-radius: 8px;
+      width: 30px; height: 30px; border-radius: 8px;
       background: var(--gold-grad);
       display: flex; align-items: center; justify-content: center;
-      font-size: 1rem; color: #0A0C14; font-weight: 900;
-      box-shadow: 0 0 20px rgba(255,200,0,0.15);
+      font-size: 0.9rem; color: #0A0C14; font-weight: 900;
+      box-shadow: 0 0 16px rgba(255,200,0,0.12);
     }
     .nav-logo span { color: var(--gold); }
-    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links { display: flex; align-items: center; gap: 24px; }
     .nav-links a {
-      font-size: 0.85rem; font-weight: 500;
-      color: var(--text-muted); text-decoration: none;
-      transition: color 0.3s; position: relative;
+      font-size: 0.82rem; font-weight: 500;
+      color: var(--text-muted); transition: color 0.3s;
+      position: relative;
     }
     .nav-links a::after {
-      content: ''; position: absolute; bottom: -4px; inset-inline: 50%;
+      content: ''; position: absolute; bottom: -3px; inset-inline: 50%;
       width: 0; height: 2px; background: var(--gold);
-      transition: 0.3s; border-radius: 2px;
+      transition: 0.3s; border-radius: 1px;
     }
     .nav-links a:hover { color: var(--text); }
     .nav-links a:hover::after { width: 100%; inset-inline: 0; }
     .nav-cta {
-      padding: 8px 22px; border-radius: 10px;
+      padding: 7px 20px; border-radius: var(--radius-sm);
       background: var(--gold-grad); color: #0A0C14;
-      font-weight: 700; font-size: 0.85rem;
-      text-decoration: none; transition: 0.3s;
-      box-shadow: 0 4px 20px rgba(255,200,0,0.15);
+      font-weight: 700; font-size: 0.82rem;
+      box-shadow: 0 4px 16px rgba(255,200,0,0.12);
+      transition: 0.3s;
     }
-    .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 6px 30px rgba(255,200,0,0.25); }
+    .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(255,200,0,0.2); }
 
-    /* ===== Common ===== */
-    section { position: relative; }
-    .section-label {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 4px 16px; border-radius: 100px;
-      background: rgba(255,200,0,0.06); border: 1px solid rgba(255,200,0,0.08);
+    /* ===== SHARED ===== */
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 14px 4px 10px; border-radius: 100px;
+      background: var(--gold-dim); border: 1px solid rgba(255,200,0,0.08);
       color: var(--gold); font-size: 0.7rem; font-weight: 700;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      margin-bottom: 16px;
+      text-transform: uppercase; letter-spacing: 0.08em;
     }
-    .section-label span { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); }
-    .section-title {
-      font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 900;
+    .badge .dot {
+      width: 5px; height: 5px; border-radius: 50%; background: var(--gold);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+    .sec-title {
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 900;
       line-height: 1.15; margin-bottom: 12px;
     }
-    .section-sub {
-      color: var(--text-muted); font-size: 1.05rem;
-      max-width: 560px; line-height: 1.7;
+    .sec-sub {
+      color: var(--text-muted); font-size: 1rem;
+      max-width: 520px; line-height: 1.7;
     }
-    .glass-card {
-      background: rgba(22, 26, 43, 0.5);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 200, 0, 0.06);
+    .gold-grad { background: var(--gold-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    .section-wrap {
+      max-width: 1280px; margin: 0 auto; padding: 0 24px;
+    }
+    .section-pad { padding: 90px 0; }
+    .section-header {
+      text-align: center; margin-bottom: 56px;
+    }
+    .section-header .badge { margin: 0 auto 14px; }
+
+    .card {
+      background: rgba(20, 24, 43, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.03);
       border-radius: var(--radius);
       transition: 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    .glass-card:hover {
-      border-color: rgba(255, 200, 0, 0.15);
-      transform: translateY(-4px);
-      box-shadow: 0 20px 60px rgba(255, 200, 0, 0.04);
+    .card:hover {
+      border-color: rgba(255, 200, 0, 0.1);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.15);
     }
-    .gold-text { background: var(--gold-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .gold-border { border: 1px solid rgba(255, 200, 0, 0.1); }
-    .gold-border:hover { border-color: rgba(255, 200, 0, 0.25); }
 
-    /* ===== Hero ===== */
+    /* ===== HERO ===== */
     .hero {
       min-height: 100vh; display: flex; align-items: center;
-      padding: 0 24px; padding-top: 64px;
-      overflow: hidden;
+      padding: 64px 24px 0; overflow: hidden; position: relative;
     }
     .hero-bg {
       position: absolute; inset: 0; pointer-events: none; overflow: hidden;
     }
     .hero-bg .orb {
-      position: absolute; border-radius: 50%;
-      filter: blur(100px);
+      position: absolute; border-radius: 50%; filter: blur(120px);
     }
-    .hero-bg .orb-1 { width: 600px; height: 600px; background: rgba(255,200,0,0.025); top: -15%; left: -10%; }
-    .hero-bg .orb-2 { width: 500px; height: 500px; background: rgba(255,160,0,0.02); bottom: -10%; right: -5%; }
-    .hero-bg .orb-3 { width: 800px; height: 800px; background: rgba(255,200,0,0.012); top: 50%; left: 50%; transform: translate(-50%,-50%); }
-
-    .hero-grid-line { position: absolute; inset: 0; opacity: 0.03;
-      background-image:
-        linear-gradient(rgba(255,200,0,0.3) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,200,0,0.3) 1px, transparent 1px);
-      background-size: 60px 60px;
+    .hero-bg .orb-1 { width: 700px; height: 700px; background: rgba(255,200,0,0.02); top: -20%; left: -15%; }
+    .hero-bg .orb-2 { width: 500px; height: 500px; background: rgba(255,160,0,0.015); bottom: -15%; right: -10%; }
+    .hero-bg .orb-3 { width: 900px; height: 900px; background: rgba(255,200,0,0.008); top: 50%; left: 50%; transform: translate(-50%,-50%); }
+    .hero-grid {
+      position: absolute; inset: 0; opacity: 0.025;
+      background-image: linear-gradient(rgba(255,200,0,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,200,0,0.2) 1px, transparent 1px);
+      background-size: 50px 50px;
     }
-
     .hero-inner {
       position: relative; z-index: 2;
       max-width: 1280px; margin: 0 auto;
       display: grid; grid-template-columns: 1fr 1fr;
-      gap: 60px; align-items: center;
-      width: 100%;
+      gap: 50px; align-items: center; width: 100%;
     }
 
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 4px 14px 4px 10px; border-radius: 100px;
-      background: rgba(255,200,0,0.06); border: 1px solid rgba(255,200,0,0.08);
-      font-size: 0.75rem; font-weight: 600; color: var(--gold);
-      margin-bottom: 24px; opacity: 0;
-    }
-    .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: pulse-dot 2s infinite; }
-    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
+    .hero-badge { transform: translateY(-10px); }
     .hero h1 {
-      font-size: clamp(2.5rem, 5vw, 4.2rem); font-weight: 900;
-      line-height: 1.08; margin-bottom: 20px; opacity: 0;
+      font-size: clamp(2.2rem, 4.5vw, 3.8rem); font-weight: 900;
+      line-height: 1.08; margin-bottom: 18px;
     }
-    .hero h1 .outline {
-      background: var(--gold-grad);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
+    .hero h1 .outline { background: var(--gold-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .hero p {
-      font-size: 1.05rem; color: var(--text-muted);
-      line-height: 1.8; margin-bottom: 36px; max-width: 520px; opacity: 0;
+      font-size: 1rem; color: var(--text-muted);
+      line-height: 1.8; margin-bottom: 32px; max-width: 500px;
     }
-    .hero p strong { color: var(--text); }
-    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; opacity: 0; }
+    .hero p strong { color: rgba(255,255,255,0.7); font-weight: 600; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; }
     .btn-primary {
-      padding: 14px 32px; border-radius: 12px;
+      padding: 13px 30px; border-radius: var(--radius-sm);
       background: var(--gold-grad); color: #0A0C14;
-      font-weight: 700; font-size: 0.95rem; text-decoration: none;
-      transition: 0.3s; display: inline-flex; align-items: center; gap: 8px;
-      box-shadow: 0 4px 24px rgba(255,200,0,0.2);
-    }
-    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 40px rgba(255,200,0,0.3); }
-    .btn-secondary {
-      padding: 14px 28px; border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.06);
-      color: var(--text); font-weight: 600; font-size: 0.95rem;
-      text-decoration: none; transition: 0.3s;
+      font-weight: 700; font-size: 0.9rem;
       display: inline-flex; align-items: center; gap: 8px;
+      box-shadow: 0 4px 20px rgba(255,200,0,0.15);
+      transition: 0.3s;
     }
-    .btn-secondary:hover { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.12); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(255,200,0,0.22); }
+    .btn-secondary {
+      padding: 13px 26px; border-radius: var(--radius-sm);
+      border: 1px solid rgba(255,255,255,0.06);
+      color: var(--text); font-weight: 600; font-size: 0.9rem;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: 0.3s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.12); }
     .hero-tech {
-      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 40px; opacity: 0;
+      display: flex; flex-wrap: wrap; gap: 6px; margin-top: 36px;
     }
     .hero-tech span {
-      padding: 4px 14px; border-radius: 6px;
-      font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+      padding: 3px 12px; border-radius: 5px;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
       background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);
-      color: rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.18);
     }
 
-    /* Hero mockup */
-    .hero-mockup {
-      position: relative; perspective: 1200px; opacity: 0;
-    }
+    /* Mockup */
+    .hero-mockup { perspective: 1200px; }
     .mockup-frame {
-      background: linear-gradient(145deg, #121624, #0E1018);
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.04);
-      overflow: hidden;
-      box-shadow: 0 40px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,200,0,0.04);
-      transform: rotateY(-8deg) rotateX(4deg);
+      background: linear-gradient(150deg, #11141F, #0C0E16);
+      border-radius: 14px; border: 1px solid rgba(255,255,255,0.04);
+      overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,200,0,0.03);
+      transform: rotateY(-6deg) rotateX(3deg);
       transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    .mockup-frame:hover { transform: rotateY(-4deg) rotateX(2deg); }
+    .mockup-frame:hover { transform: rotateY(-3deg) rotateX(1deg); }
     .mockup-titlebar {
-      height: 32px; background: rgba(10,12,20,0.6);
-      display: flex; align-items: center; gap: 8px; padding: 0 14px;
+      height: 30px; background: rgba(10,12,20,0.5);
+      display: flex; align-items: center; gap: 7px; padding: 0 12px;
     }
-    .mockup-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .mockup-dot { width: 7px; height: 7px; border-radius: 50%; }
     .mockup-dot.r { background: #FF5F56; }
     .mockup-dot.y { background: #FFBD2E; }
     .mockup-dot.g { background: #27C93F; }
-    .mockup-body { padding: 16px; display: flex; gap: 12px; }
-    .mockup-sidebar {
-      width: 36px; display: flex; flex-direction: column; gap: 6px;
-    }
-    .mockup-sidebar div {
-      height: 6px; border-radius: 3px;
-      background: rgba(255,255,255,0.1);
-    }
-    .mockup-sidebar div:first-child { background: var(--gold); opacity: 0.4; }
-    .mockup-main { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-    .mockup-row { display: flex; gap: 8px; }
+    .mockup-body { padding: 14px; display: flex; gap: 10px; }
+    .mockup-sidebar { width: 32px; display: flex; flex-direction: column; gap: 5px; }
+    .mockup-sidebar div { height: 5px; border-radius: 2px; background: rgba(255,255,255,0.08); }
+    .mockup-sidebar div:first-child { background: var(--gold); opacity: 0.3; }
+    .mockup-main { flex: 1; display: flex; flex-direction: column; gap: 7px; }
+    .mockup-row { display: flex; gap: 7px; }
     .mockup-card {
-      flex: 1; border-radius: 8px; padding: 10px;
-      background: rgba(255,255,255,0.02);
+      flex: 1; border-radius: 7px; padding: 8px;
+      background: rgba(255,255,255,0.015);
       border: 1px solid rgba(255,255,255,0.03);
     }
-    .mockup-card .stat-val {
-      font-size: 1.1rem; font-weight: 800; margin-bottom: 2px;
+    .mockup-card .v { font-size: 1rem; font-weight: 800; margin-bottom: 1px; }
+    .mockup-card .l { font-size: 0.5rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .mockup-chart { display: flex; align-items: flex-end; gap: 3px; height: 28px; margin-top: 3px; }
+    .mockup-chart div { flex: 1; border-radius: 2px 2px 0 0; background: rgba(255,200,0,0.12); }
+    .mockup-chart div:nth-child(4) { background: rgba(255,200,0,0.28); }
+    .mockup-chart div:nth-child(7) { background: rgba(255,200,0,0.32); }
+    .mockup-bottom { display: flex; gap: 7px; margin-top: 2px; }
+    .mockup-bottom > div {
+      flex: 1; border-radius: 7px; padding: 7px 9px;
+      background: rgba(255,255,255,0.015);
+      border: 1px solid rgba(255,255,255,0.03);
+      display: flex; align-items: center; gap: 6px;
     }
-    .mockup-card .stat-lbl {
-      font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;
-    }
-    .mockup-chart {
-      margin-top: 4px; display: flex; align-items: flex-end; gap: 4px; height: 30px;
-    }
-    .mockup-chart div {
-      flex: 1; border-radius: 2px 2px 0 0; background: rgba(255,200,0,0.15);
-      transition: 0.3s;
-    }
-    .mockup-chart div:nth-child(4) { background: rgba(255,200,0,0.3); }
-    .mockup-chart div:nth-child(7) { background: rgba(255,200,0,0.35); }
+    .mockup-bottom .e { font-size: 0.6rem; }
+    .mockup-bottom .t { font-size: 0.55rem; font-weight: 600; }
+    .mockup-bottom .s { font-size: 0.45rem; color: var(--text-muted); }
+    .mockup-progress { width: 100%; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.04); overflow: hidden; }
+    .mockup-progress div { height: 100%; border-radius: 2px; width: 64%; background: var(--gold-grad); }
 
-    /* ===== Marquee ===== */
-    .marquee-section { padding: 40px 0; overflow: hidden; }
-    .marquee-track {
-      display: flex; gap: 48px; width: max-content;
-      animation: marquee 40s linear infinite;
+    /* ===== MARQUEE ===== */
+    .marquee-wrap { padding: 30px 0; overflow: hidden; border-top: 1px solid rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.02); }
+    .marquee { display: flex; gap: 40px; width: max-content; animation: marquee 35s linear infinite; }
+    .marquee span {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+      color: rgba(255,255,255,0.06); white-space: nowrap;
+      display: flex; align-items: center; gap: 10px;
     }
-    .marquee-track span {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem; color: rgba(255,255,255,0.08);
-      white-space: nowrap; letter-spacing: 0.05em;
-      display: flex; align-items: center; gap: 12px;
-    }
-    .marquee-track span::before { content: '◆'; font-size: 0.4rem; color: var(--gold); opacity: 0.3; }
+    .marquee span::before { content: '◆'; font-size: 0.35rem; color: var(--gold); opacity: 0.2; }
     @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
 
-    /* ===== Features ===== */
-    .features-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;
-    }
+    /* ===== FEATURES GRID ===== */
+    .feat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
     .feat-card {
-      padding: 28px; border-radius: var(--radius);
-      background: rgba(22, 26, 43, 0.3);
-      border: 1px solid rgba(255, 200, 0, 0.04);
+      padding: 26px; border-radius: var(--radius);
+      background: rgba(20, 24, 43, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.03);
       transition: 0.5s cubic-bezier(0.22, 1, 0.36, 1);
       position: relative; overflow: hidden;
     }
     .feat-card::before {
       content: ''; position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(255,200,0,0.02), transparent);
+      background: linear-gradient(135deg, rgba(255,200,0,0.015), transparent);
       opacity: 0; transition: 0.5s;
     }
-    .feat-card:hover { border-color: rgba(255,200,0,0.12); transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,0.2); }
+    .feat-card:hover { border-color: rgba(255,200,0,0.08); transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.1); }
     .feat-card:hover::before { opacity: 1; }
     .feat-icon {
-      width: 44px; height: 44px; border-radius: 12px;
-      background: rgba(255,200,0,0.06);
-      border: 1px solid rgba(255,200,0,0.06);
+      width: 40px; height: 40px; border-radius: 10px;
+      background: var(--gold-dim); border: 1px solid rgba(255,200,0,0.05);
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.2rem; margin-bottom: 16px;
+      font-size: 1.1rem; margin-bottom: 14px;
     }
-    .feat-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
-    .feat-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.7; }
+    .feat-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 5px; }
+    .feat-card p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.7; }
 
-    /* ===== Screenshots ===== */
-    .screenshot-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
-    }
-    .screenshot-grid > :first-child { grid-column: span 2; grid-row: span 2; }
+    /* ===== SCREENSHOTS ===== */
+    .shot-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .shot-grid > :first-child { grid-column: span 2; grid-row: span 2; }
     .shot-card {
-      border-radius: 12px; overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 10px; overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.03);
       position: relative; cursor: pointer;
-      transition: 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      background: var(--surface);
     }
-    .shot-card:hover { border-color: rgba(255,200,0,0.12); transform: translateY(-2px); }
-    .shot-card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: 0.7s; }
-    .shot-card:hover img { transform: scale(1.04); }
-    .shot-card .overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(transparent 60%, rgba(10,12,20,0.7));
-      opacity: 0; transition: 0.4s;
+    .shot-card:hover { border-color: rgba(255,200,0,0.1); transform: translateY(-2px); }
+    .shot-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s; }
+    .shot-card:hover img { transform: scale(1.03); }
+    .shot-card .lbl {
+      position: absolute; bottom: 0; inset-inline: 0;
+      padding: 24px 12px 10px;
+      background: linear-gradient(transparent, rgba(10,12,20,0.7));
+      font-size: 0.8rem; font-weight: 600;
+      opacity: 0; transform: translateY(6px);
+      transition: 0.3s;
     }
-    .shot-card:hover .overlay { opacity: 1; }
-    .shot-card .label {
-      position: absolute; bottom: 0; inset-inline: 0; padding: 14px;
-      transform: translateY(8px); opacity: 0; transition: 0.4s;
-      font-size: 0.85rem; font-weight: 600;
-    }
-    .shot-card:hover .label { transform: translateY(0); opacity: 1; }
+    .shot-card:hover .lbl { opacity: 1; transform: translateY(0); }
 
-    /* ===== Stats ===== */
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-    .stat-item {
-      padding: 32px 20px; border-radius: var(--radius); text-align: center;
-      background: rgba(22, 26, 43, 0.3);
-      border: 1px solid rgba(255, 200, 0, 0.04);
+    /* ===== STATS ===== */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .stat-card {
+      padding: 28px 16px; border-radius: var(--radius); text-align: center;
+      background: rgba(20, 24, 43, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.03);
     }
     .stat-ring {
-      position: relative; width: 80px; height: 80px;
-      margin: 0 auto 16px;
+      position: relative; width: 72px; height: 72px;
+      margin: 0 auto 12px;
     }
-    .stat-ring svg { transform: rotate(-90deg); }
-    .stat-ring .bg { fill: none; stroke: rgba(255,200,0,0.06); stroke-width: 4; }
+    .stat-ring svg { transform: rotate(-90deg); display: block; }
+    .stat-ring .bg { fill: none; stroke: rgba(255,200,0,0.05); stroke-width: 4; }
     .stat-ring .fg {
       fill: none; stroke: url(#goldGrad); stroke-width: 4;
       stroke-linecap: round;
-      stroke-dasharray: 220;
-      stroke-dashoffset: 220;
-      transition: stroke-dashoffset 2s cubic-bezier(0.22, 1, 0.36, 1);
+      stroke-dasharray: 200;
+      stroke-dashoffset: 200;
+      transition: stroke-dashoffset 1.8s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    .stat-ring .fg.visible { stroke-dashoffset: var(--target); }
+    .stat-ring .fg.vis { stroke-dashoffset: var(--t); }
     .stat-val {
       position: absolute; inset: 0;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.2rem; font-weight: 900; color: var(--gold);
+      font-size: 1.1rem; font-weight: 900; color: var(--gold);
     }
-    .stat-label { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+    .stat-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
 
-    /* ===== Games ===== */
-    .games-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    /* ===== DETAILED FEATURES ===== */
+    .detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .detail-card {
+      padding: 28px; border-radius: var(--radius);
+      background: rgba(20, 24, 43, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+    .detail-card .d-icon { font-size: 1.6rem; margin-bottom: 12px; }
+    .detail-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+    .detail-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.7; }
+    .detail-card ul { margin-top: 10px; list-style: none; display: flex; flex-direction: column; gap: 4px; }
+    .detail-card ul li {
+      font-size: 0.78rem; color: var(--text-muted);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .detail-card ul li::before { content: '—'; color: var(--gold); opacity: 0.4; }
+
+    /* ===== GAMES ===== */
+    .games-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
     .game-card {
-      padding: 28px 20px; border-radius: var(--radius); text-align: center;
-      background: linear-gradient(145deg, rgba(22,26,43,0.3), rgba(22,26,43,0.1));
-      border: 1px solid rgba(255,200,0,0.04);
-      transition: 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      padding: 24px 16px; border-radius: var(--radius); text-align: center;
+      background: rgba(20, 24, 43, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      transition: 0.4s cubic-bezier(0.22, 1, 0.36, 1);
       position: relative; overflow: hidden;
     }
-    .game-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: var(--gold-grad); opacity: 0; transition: 0.5s;
-    }
-    .game-card:hover { transform: translateY(-6px); border-color: rgba(255,200,0,0.1); }
+    .game-card::before { content: ''; position: absolute; top: 0; inset-inline: 0; height: 2px; background: var(--gold-grad); opacity: 0; transition: 0.4s; }
+    .game-card:hover { transform: translateY(-4px); border-color: rgba(255,200,0,0.08); }
     .game-card:hover::before { opacity: 1; }
-    .game-emoji { font-size: 2.2rem; margin-bottom: 12px; }
-    .game-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
-    .game-card p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; }
+    .game-e { font-size: 2rem; margin-bottom: 10px; }
+    .game-card h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
+    .game-card p { font-size: 0.75rem; color: var(--text-muted); line-height: 1.6; }
 
-    /* ===== Architecture ===== */
-    .arch-flow {
-      display: flex; align-items: center; justify-content: center;
-      flex-wrap: wrap; gap: 0;
-    }
+    /* ===== ARCH ===== */
+    .arch-wrap { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0; }
     .arch-node {
-      padding: 20px 28px; border-radius: 12px; text-align: center;
-      background: rgba(22,26,43,0.3); border: 1px solid rgba(255,200,0,0.04);
-      min-width: 120px; transition: 0.3s;
+      padding: 16px 22px; border-radius: var(--radius-sm); text-align: center;
+      background: rgba(20, 24, 43, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      min-width: 100px; transition: 0.3s;
     }
-    .arch-node:hover { border-color: rgba(255,200,0,0.12); transform: translateY(-4px); }
-    .arch-node .emoji { font-size: 1.5rem; margin-bottom: 4px; }
-    .arch-node .name { font-weight: 700; font-size: 0.9rem; }
-    .arch-node .desc { font-size: 0.65rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
-    .arch-arrow {
-      padding: 0 12px; color: rgba(255,255,255,0.06);
-      font-size: 1.5rem; font-weight: 100;
-    }
+    .arch-node:hover { border-color: rgba(255,200,0,0.08); transform: translateY(-3px); }
+    .arch-node .e { font-size: 1.3rem; margin-bottom: 2px; }
+    .arch-node .n { font-weight: 700; font-size: 0.85rem; }
+    .arch-node .d { font-size: 0.6rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; margin-top: 1px; }
+    .arch-arr { padding: 0 8px; color: rgba(255,255,255,0.04); font-size: 1.3rem; font-weight: 100; }
 
-    /* ===== Roadmap ===== */
-    .roadmap { position: relative; padding-right: 28px; }
-    .roadmap::before {
-      content: ''; position: absolute; right: 8px; top: 0; bottom: 0;
-      width: 1px; background: rgba(255,200,0,0.08);
+    /* ===== THEMES TABLE ===== */
+    .theme-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+    .theme-card {
+      padding: 16px; border-radius: var(--radius-sm); text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      position: relative;
     }
-    .roadmap-item { position: relative; padding: 0 0 32px 0; }
-    .roadmap-item::before {
-      content: ''; position: absolute; right: -24px; top: 6px;
-      width: 10px; height: 10px; border-radius: 50%;
-      background: rgba(255,200,0,0.08); border: 2px solid rgba(255,200,0,0.12);
+    .theme-card .swatch {
+      width: 100%; height: 32px; border-radius: 6px; margin-bottom: 8px;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .theme-card h4 { font-size: 0.8rem; font-weight: 700; }
+    .theme-card p { font-size: 0.65rem; color: var(--text-muted); }
+
+    /* ===== ROADMAP ===== */
+    .roadmap { position: relative; padding-right: 24px; }
+    .roadmap::before {
+      content: ''; position: absolute; right: 7px; top: 0; bottom: 0;
+      width: 1px; background: rgba(255,200,0,0.06);
+    }
+    .rm-item { position: relative; padding: 0 0 28px 0; }
+    .rm-item::before {
+      content: ''; position: absolute; right: -20px; top: 5px;
+      width: 9px; height: 9px; border-radius: 50%;
+      border: 2px solid rgba(255,200,0,0.1); background: rgba(255,200,0,0.04);
       transition: 0.3s;
     }
-    .roadmap-item:hover::before { background: var(--gold); border-color: var(--gold); }
-    .roadmap-item .tag {
-      display: inline-block; padding: 2px 10px; border-radius: 4px;
-      font-size: 0.65rem; font-weight: 700; font-family: 'JetBrains Mono', monospace;
-      background: rgba(255,200,0,0.06); color: var(--gold);
-      margin-bottom: 6px;
+    .rm-item:hover::before { background: var(--gold); border-color: var(--gold); }
+    .rm-item .tag {
+      display: inline-block; padding: 2px 8px; border-radius: 4px;
+      font-size: 0.6rem; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+      background: var(--gold-dim); color: var(--gold);
+      margin-bottom: 4px;
     }
-    .roadmap-item h4 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
-    .roadmap-item p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; }
+    .rm-item h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 3px; }
+    .rm-item p { font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; }
 
     /* ===== FAQ ===== */
     .faq-item {
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      padding: 16px 0; cursor: pointer;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      padding: 14px 0; cursor: pointer;
     }
     .faq-q {
       display: flex; justify-content: space-between; align-items: center;
-      font-weight: 600; font-size: 0.95rem;
-      user-select: none;
+      font-weight: 600; font-size: 0.9rem; user-select: none;
     }
-    .faq-q span { transition: 0.3s; font-size: 1.2rem; }
-    .faq-item.open .faq-q span { transform: rotate(45deg); }
+    .faq-q .icon { transition: 0.3s; font-size: 1.1rem; }
+    .faq-item.open .faq-q .icon { transform: rotate(45deg); }
     .faq-a {
       max-height: 0; overflow: hidden;
       transition: 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-      font-size: 0.85rem; color: var(--text-muted); line-height: 1.7;
+      font-size: 0.82rem; color: var(--text-muted); line-height: 1.7;
     }
-    .faq-item.open .faq-a { max-height: 200px; padding-top: 12px; }
+    .faq-item.open .faq-a { max-height: 300px; padding-top: 10px; }
 
     /* ===== CTA ===== */
-    .cta-section {
-      padding: 100px 24px; text-align: center;
+    .cta-sec {
+      padding: 90px 24px; text-align: center;
       position: relative; overflow: hidden;
     }
     .cta-bg {
       position: absolute; inset: 0; pointer-events: none;
     }
-    .cta-bg .orb {
-      position: absolute; border-radius: 50%; filter: blur(120px);
-    }
-    .cta-bg .orb-1 { width: 500px; height: 500px; background: rgba(255,200,0,0.03); top: 50%; left: 50%; transform: translate(-50%,-50%); }
-    .cta-bg .orb-2 { width: 300px; height: 300px; background: rgba(255,160,0,0.02); bottom: 0; right: 0; }
+    .cta-bg .orb { position: absolute; border-radius: 50%; filter: blur(120px); }
+    .cta-bg .o1 { width: 500px; height: 500px; background: rgba(255,200,0,0.02); top: 50%; left: 50%; transform: translate(-50%,-50%); }
+    .cta-bg .o2 { width: 300px; height: 300px; background: rgba(255,160,0,0.015); bottom: 0; right: 0; }
 
-    /* ===== Footer ===== */
+    /* ===== FOOTER ===== */
     footer {
-      border-top: 1px solid rgba(255,255,255,0.03);
-      padding: 40px 24px;
+      border-top: 1px solid rgba(255,255,255,0.02);
+      padding: 36px 24px;
     }
     .footer-inner {
       max-width: 1280px; margin: 0 auto;
-      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px;
     }
-    .footer-inner .copy { font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
-    .footer-inner .copy .mark { width: 22px; height: 22px; border-radius: 6px; background: var(--gold-grad); display: flex; align-items: center; justify-content: center; font-size: 0.6rem; color: #0A0C14; font-weight: 900; }
-    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
-    .footer-links a { font-size: 0.8rem; color: var(--text-muted); text-decoration: none; transition: 0.3s; }
+    .footer-copy { font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 7px; }
+    .footer-copy .m { width: 20px; height: 20px; border-radius: 5px; background: var(--gold-grad); display: flex; align-items: center; justify-content: center; font-size: 0.55rem; color: #0A0C14; font-weight: 900; }
+    .footer-links { display: flex; gap: 20px; flex-wrap: wrap; }
+    .footer-links a { font-size: 0.78rem; color: var(--text-muted); transition: 0.3s; }
     .footer-links a:hover { color: var(--text); }
-    .footer-made { font-size: 0.75rem; color: rgba(255,255,255,0.12); }
+    .footer-made { font-size: 0.72rem; color: rgba(255,255,255,0.08); }
 
-    /* ===== Responsive ===== */
-    @media (max-width: 900px) {
-      .hero-inner { grid-template-columns: 1fr; gap: 40px; }
-      .hero-mockup { max-width: 500px; margin: 0 auto; }
-      .mockup-frame { transform: none; }
-      .mockup-frame:hover { transform: none; }
-      .nav-links { display: none; }
-      .screenshot-grid { grid-template-columns: 1fr 1fr; }
-      .screenshot-grid > :first-child { grid-column: span 2; grid-row: span 1; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 560px) {
-      .screenshot-grid { grid-template-columns: 1fr; }
-      .screenshot-grid > :first-child { grid-column: span 1; }
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-      .features-grid { grid-template-columns: 1fr; }
-      .games-grid { grid-template-columns: 1fr; }
-    }
-
-    /* ===== Lightbox ===== */
-    .lightbox {
+    /* ===== LIGHTBOX ===== */
+    .lb {
       position: fixed; inset: 0; z-index: 200;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(20px);
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(24px);
       display: flex; align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none;
-      transition: 0.4s;
+      opacity: 0; pointer-events: none; transition: 0.4s;
     }
-    .lightbox.open { opacity: 1; pointer-events: auto; }
-    .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06); }
-    .lightbox-close {
-      position: absolute; top: 20px; right: 20px;
-      width: 40px; height: 40px; border-radius: 50%;
-      background: rgba(255,255,255,0.06); border: none;
-      color: #fff; font-size: 1.2rem; cursor: pointer;
+    .lb.open { opacity: 1; pointer-events: auto; }
+    .lb img { max-width: 92vw; max-height: 92vh; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.04); }
+    .lb-close {
+      position: absolute; top: 20px; inset-inline-end: 20px;
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(255,255,255,0.04); border: none;
+      color: #fff; font-size: 1.1rem; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       transition: 0.3s;
     }
-    .lightbox-close:hover { background: rgba(255,255,255,0.12); }
+    .lb-close:hover { background: rgba(255,255,255,0.1); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 36px; }
+      .hero-mockup { max-width: 480px; margin: 0 auto; }
+      .mockup-frame { transform: none; }
+      .mockup-frame:hover { transform: none; }
+      .nav-links { display: none; }
+      .shot-grid { grid-template-columns: 1fr 1fr; }
+      .shot-grid > :first-child { grid-column: span 2; grid-row: span 1; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .section-pad { padding: 60px 0; }
+    }
+    @media (max-width: 560px) {
+      .shot-grid { grid-template-columns: 1fr; }
+      .shot-grid > :first-child { grid-column: span 1; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .feat-grid { grid-template-columns: 1fr; }
+      .games-grid { grid-template-columns: 1fr 1fr; }
+      .section-pad { padding: 40px 0; }
+      .hero h1 { font-size: 1.8rem; }
+    }
   </style>
 </head>
 <body>
 
-  <div id="cursor"></div>
+  <div id="cursor-glow"></div>
 
-  <!-- ===== LIGHTBOX ===== -->
-  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
-    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
-    <img id="lightbox-img" src="" alt="Screenshot">
+  <!-- LIGHTBOX -->
+  <div class="lb" id="lb" onclick="closeLB()">
+    <button class="lb-close" onclick="closeLB()">✕</button>
+    <img id="lb-img" src="" alt="Screenshot">
   </div>
 
   <!-- ===== NAVBAR ===== -->
@@ -550,12 +553,11 @@
       Typo<span>Master</span>
     </a>
     <div class="nav-links">
+      <a href="#about">عن البرنامج</a>
       <a href="#features">الميزات</a>
       <a href="#screenshots">لقطات</a>
       <a href="#games">الألعاب</a>
       <a href="#stats">إحصائيات</a>
-      <a href="#roadmap">الخطة</a>
-      <a href="#faq">الأسئلة</a>
       <a href="https://github.com/alhmli70/typomaster/releases" class="nav-cta">تحميل</a>
     </div>
   </nav>
@@ -566,30 +568,24 @@
       <div class="orb orb-1"></div>
       <div class="orb orb-2"></div>
       <div class="orb orb-3"></div>
-      <div class="hero-grid-line"></div>
+      <div class="hero-grid"></div>
     </div>
     <div class="hero-inner">
       <div>
-        <div class="hero-badge" id="heroBadge">
-          <span class="dot"></span>
-          الإصدار 1.0.0 — جاهز للتثبيت
-        </div>
-        <h1 id="heroTitle">
-          أتقن<br>
-          <span class="outline">الطباعة</span>
-        </h1>
+        <div class="badge hero-badge" id="heroBadge"><span class="dot"></span>الإصدار 1.0.0 — جاهز للتثبيت</div>
+        <h1 id="heroTitle">أتقن <span class="outline">الطباعة</span></h1>
         <p id="heroDesc">
-          تطوير مهارات الطباعة بالعربية والإنجليزية مع <strong>210+ تمرين</strong>،
-          <strong>40 درس</strong>، <strong>5 ألعاب تفاعلية</strong>،
-          وتحليلات أداء متقدمة — في تطبيق سطح مكتب أنيق وسريع.
+          برنامج احترافي <strong>مجاني ومفتوح المصدر</strong> لتعليم الطباعة بالعربية والإنجليزية.
+          <strong>210+ تمرين</strong>، <strong>40 درس</strong>، <strong>5 ألعاب تفاعلية</strong>،
+          <strong>10 ثيمات</strong>، وتحليلات أداء متقدمة — كل هذا في تطبيق سطح مكتب أنيق وسريع.
         </p>
         <div class="hero-actions" id="heroActions">
           <a href="https://github.com/alhmli70/typomaster/releases" class="btn-primary">
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             تحميل مجاني
           </a>
           <a href="https://github.com/alhmli70/typomaster" class="btn-secondary">
-            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
             كود المصدر
           </a>
         </div>
@@ -600,10 +596,11 @@
           <span>Rust</span>
           <span>SQLite</span>
           <span>Tailwind CSS</span>
+          <span>Vite 6</span>
         </div>
       </div>
       <div class="hero-mockup" id="heroMockup">
-        <div class="mockup-frame">
+        <div class="mockup-frame" id="mockupFrame">
           <div class="mockup-titlebar">
             <div class="mockup-dot r"></div>
             <div class="mockup-dot y"></div>
@@ -615,47 +612,28 @@
             </div>
             <div class="mockup-main">
               <div class="mockup-row">
-                <div class="mockup-card">
-                  <div class="stat-val" style="color:#4F8CFF">47</div>
-                  <div class="stat-lbl">WPM</div>
-                </div>
-                <div class="mockup-card">
-                  <div class="stat-val" style="color:#34D399">96%</div>
-                  <div class="stat-lbl">ACCURACY</div>
-                </div>
-                <div class="mockup-card">
-                  <div class="stat-val" style="color:var(--gold)">1,280</div>
-                  <div class="stat-lbl">XP</div>
-                </div>
-                <div class="mockup-card">
-                  <div class="stat-val" style="color:#A78BFA">12</div>
-                  <div class="stat-lbl">STREAK</div>
-                </div>
+                <div class="mockup-card"><div class="v" style="color:#4F8CFF">47</div><div class="l">WPM</div></div>
+                <div class="mockup-card"><div class="v" style="color:#34D399">96%</div><div class="l">ACCURACY</div></div>
+                <div class="mockup-card"><div class="v" style="color:var(--gold)">1,280</div><div class="l">XP</div></div>
+                <div class="mockup-card"><div class="v" style="color:#A78BFA">12</div><div class="l">STREAK</div></div>
               </div>
-              <div style="height:60px; border-radius:8px; background:rgba(255,255,255,0.015); border:1px solid rgba(255,255,255,0.03); padding:8px;">
-                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                  <span style="font-size:0.55rem; color:var(--text-muted); letter-spacing:0.08em; text-transform:uppercase;">Weekly Activity</span>
+              <div style="height:56px; border-radius:7px; background:rgba(255,255,255,0.012); border:1px solid rgba(255,255,255,0.03); padding:7px 9px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                  <span style="font-size:0.5rem; color:var(--text-muted); letter-spacing:0.06em; text-transform:uppercase;">Weekly Activity</span>
                 </div>
                 <div class="mockup-chart">
-                  <div style="height:18px"></div>
-                  <div style="height:28px"></div>
-                  <div style="height:14px"></div>
-                  <div style="height:38px"></div>
-                  <div style="height:22px"></div>
                   <div style="height:16px"></div>
+                  <div style="height:26px"></div>
+                  <div style="height:12px"></div>
                   <div style="height:34px"></div>
+                  <div style="height:20px"></div>
+                  <div style="height:14px"></div>
+                  <div style="height:30px"></div>
                 </div>
               </div>
-              <div style="display:flex; gap:8px; margin-top:4px;">
-                <div style="flex:1; border-radius:8px; background:rgba(255,255,255,0.015); border:1px solid rgba(255,255,255,0.03); padding:8px; display:flex; gap:6px; align-items:center;">
-                  <span style="font-size:0.7rem;">🏆</span>
-                  <div><div style="font-size:0.65rem; font-weight:600;">Level 8</div><div style="font-size:0.5rem; color:var(--text-muted);">Progress 64%</div></div>
-                </div>
-                <div style="flex:1; border-radius:8px; background:rgba(255,255,255,0.015); border:1px solid rgba(255,255,255,0.03); padding:8px; display:flex; align-items:center; justify-content:center;">
-                  <div style="width:100%; height:4px; border-radius:2px; background:rgba(255,255,255,0.06); overflow:hidden;">
-                    <div style="width:64%; height:100%; border-radius:2px; background:var(--gold-grad);"></div>
-                  </div>
-                </div>
+              <div class="mockup-bottom">
+                <div><span class="e">🏆</span><div><div class="t">Level 8</div><div class="s">64% to Level 9</div></div></div>
+                <div><div style="flex:1"><div class="t">Progress</div><div class="mockup-progress"><div></div></div></div></div>
               </div>
             </div>
           </div>
@@ -665,8 +643,8 @@
   </section>
 
   <!-- ===== MARQUEE ===== -->
-  <div class="marquee-section">
-    <div class="marquee-track" id="marquee">
+  <div class="marquee-wrap">
+    <div class="marquee" id="marquee">
       <span>React 19</span><span>TypeScript 5.8</span><span>Tauri 2</span><span>Rust 2021</span><span>SQLite</span>
       <span>Tailwind CSS 4</span><span>Vite 6</span><span>Lucide</span><span>Motion</span><span>Node.js 20+</span>
       <span>React 19</span><span>TypeScript 5.8</span><span>Tauri 2</span><span>Rust 2021</span><span>SQLite</span>
@@ -674,116 +652,234 @@
     </div>
   </div>
 
-  <!-- ===== FEATURES ===== -->
-  <section id="features" style="padding:80px 24px;">
-    <div style="max-width:1280px; margin:0 auto;">
-      <div style="text-align:center; margin-bottom:60px; opacity:0;" id="featHeader">
-        <div class="section-label" style="margin:0 auto 16px;"><span></span>Features</div>
-        <h2 class="section-title">ميزات احترافية<br><span class="gold-text">للمبتدئين والمحترفين</span></h2>
-        <p class="section-sub" style="margin:0 auto;">كل ما تحتاجه لتصبح محترفاً في الطباعة على لوحة المفاتيح</p>
+  <!-- ===== ABOUT ===== -->
+  <section id="about" class="section-pad" style="background:var(--bg-raised);">
+    <div class="section-wrap">
+      <div class="section-header" id="aboutHeader">
+        <div class="badge"><span class="dot"></span>About</div>
+        <h2 class="sec-title">ما هو <span class="gold-grad">TypoMaster</span>؟</h2>
+        <p class="sec-sub" style="margin:0 auto;">تطوير مهارات الطباعة لديك من الصفر إلى الاحتراف مع أفضل برنامج تدريب مجاني</p>
       </div>
-      <div class="features-grid" id="featGrid">
-        <div class="feat-card"><div class="feat-icon">📚</div><h3>40 درساً نظرياً</h3><p>20 عربي + 20 إنجليزي — من المفاتيح الرئيسية إلى تقنيات السرعة المتقدمة.</p></div>
-        <div class="feat-card"><div class="feat-icon">⌨️</div><h3>210+ تمرين عملي</h3><p>10 مجموعات، 3 مستويات صعوبة، تمارين تصاعدية تغطي كل جوانب الطباعة.</p></div>
-        <div class="feat-card"><div class="feat-icon">🎮</div><h3>5 ألعاب تفاعلية</h3><p>الكلمات المتساقطة • قناص مسافة • نينجا الحروف • ذاكرة الطباعة • سباق السرعة.</p></div>
-        <div class="feat-card"><div class="feat-icon">📊</div><h3>إحصائيات متقدمة</h3><p>WPM، الدقة، الأخطاء، رسوم بيانية أسبوعية، Streak الأيام — تتبع كل تقدمك.</p></div>
-        <div class="feat-card"><div class="feat-icon">🏆</div><h3>10+ إنجازات</h3><p>نظام XP، مستويات، شارات إنجاز — كل جلسة تقربك من الإنجاز التالي.</p></div>
-        <div class="feat-card"><div class="feat-icon">🎨</div><h3>10 ثيمات احترافية</h3><p>5 غامقة + 5 فاتحة بتصميم بيج فاخر — ألوان أكسنت مميزة لكل ذوق.</p></div>
-        <div class="feat-card"><div class="feat-icon">🤖</div><h3>نصائح ذكية مدمجة</h3><p>مدمجة بدون إنترنت — مخصصة لكل درس وتمرين. لا حاجة لاتصال دائم بالإنترنت.</p></div>
-        <div class="feat-card"><div class="feat-icon">💽</div><h3>SQLite مدمجة</h3><p>قاعدة بيانات محلية دائمة — لا فقدان للبيانات. كل تقدمك محفوظ بشكل آمن.</p></div>
-        <div class="feat-card"><div class="feat-icon">🌙</div><h3>وضع مظلم / فاتح</h3><p>تبديل فوري بين 5 ثيمات غامقة و 5 فاتحة — يناسب كل الأوقات والأذواق.</p></div>
+      <div style="max-width:860px; margin:0 auto;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;" id="aboutGrid">
+          <div class="card" style="padding:28px;">
+            <div style="font-size:1.5rem; margin-bottom:10px;">🎯</div>
+            <h3 style="font-size:1rem; font-weight:700; margin-bottom:6px;">لماذا TypoMaster؟</h3>
+            <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.7;">
+              TypoMaster ليس مجرد برنامج طباعة عادي. إنه منصة متكاملة تجمع بين <strong style="color:var(--text);">الدروس النظرية</strong>،
+              <strong style="color:var(--text);">التمارين العملية</strong>، و<strong style="color:var(--text);">الألعاب التفاعلية</strong>
+              لتجربة تعلم ممتعة وفعالة. يدعم العربية والإنجليزية بشكل متكامل.
+            </p>
+          </div>
+          <div class="card" style="padding:28px;">
+            <div style="font-size:1.5rem; margin-bottom:10px;">💡</div>
+            <h3 style="font-size:1rem; font-weight:700; margin-bottom:6px;">الفكرة الأساسية</h3>
+            <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.7;">
+              التعلم عن طريق <strong style="color:var(--text);">الممارسة المستمرة</strong> مع متابعة دقيقة للأداء.
+              كل درس يبني على الذي قبله، وكل تمرين يصقل مهاراتك. الألعاب تجعل التعلم ممتعاً
+              والإحصائيات تساعدك على رؤية تقدمك.
+            </p>
+          </div>
+          <div class="card" style="padding:28px;">
+            <div style="font-size:1.5rem; margin-bottom:10px;">🆓</div>
+            <h3 style="font-size:1rem; font-weight:700; margin-bottom:6px;">مجاني تماماً</h3>
+            <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.7;">
+              التطبيق <strong style="color:var(--text);">مفتوح المصدر</strong> بالكامل (MIT License).
+              لا إعلانات، لا اشتراكات، لا بيانات مخفية. حمّله واستخدمه مجاناً للأبد.
+            </p>
+          </div>
+          <div class="card" style="padding:28px;">
+            <div style="font-size:1.5rem; margin-bottom:10px;">🚀</div>
+            <h3 style="font-size:1rem; font-weight:700; margin-bottom:6px;">أداء عالٍ</h3>
+            <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.7;">
+              مبني باستخدام <strong style="color:var(--text);">Tauri + Rust</strong> لتطبيق سطح مكتب خفيف وسريع.
+              استهلاك منخفض للموارد، وقت تشغيل فوري، وحجم تحميل صغير (~28 MB).
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FEATURES ===== -->
+  <section id="features" class="section-pad">
+    <div class="section-wrap">
+      <div class="section-header" id="featHeader">
+        <div class="badge"><span class="dot"></span>Features</div>
+        <h2 class="sec-title">ميزات <span class="gold-grad">احترافية</span></h2>
+        <p class="sec-sub" style="margin:0 auto;">كل ما تحتاجه لتصبح محترفاً في الطباعة على لوحة المفاتيح</p>
+      </div>
+      <div class="feat-grid" id="featGrid">
+        <div class="feat-card"><div class="feat-icon">📚</div><h3>40 درساً نظرياً</h3><p>20 عربي + 20 إنجليزي — من المفاتيح الرئيسية إلى تقنيات السرعة المتقدمة. تغطية شاملة لكل المستويات.</p></div>
+        <div class="feat-card"><div class="feat-icon">⌨️</div><h3>210+ تمرين عملي</h3><p>10 مجموعات، 3 مستويات صعوبة (مبتدئ/متوسط/متقدم)، تمارين تصاعدية تغطي الحروف والكلمات والجمل.</p></div>
+        <div class="feat-card"><div class="feat-icon">🎮</div><h3>5 ألعاب تفاعلية</h3><p>الكلمات المتساقطة • قناص مسافة • نينجا الحروف • ذاكرة الطباعة • سباق السرعة — تعلم ممتنع وفعال.</p></div>
+        <div class="feat-card"><div class="feat-icon">📊</div><h3>تحليلات أداء</h3><p>WPM، الدقة، الأخطاء، رسوم بيانية أسبوعية، Streak الأيام، إحصائيات لكل جلسة — تتبع كل شيء.</p></div>
+        <div class="feat-card"><div class="feat-icon">🏆</div><h3>نظام إنجازات XP</h3><p>10+ إنجازات قابلة للفتح، مستويات XP، شارات — كل جلسة تدريب تقربك من الإنجاز التالي وتحفزك.</p></div>
+        <div class="feat-card"><div class="feat-icon">🎨</div><h3>10 ثيمات احترافية</h3><p>5 غامقة (نيلي، ياقوتي، بحري، غابي، فحمي) + 5 فاتحة بتصميم بيج فاخر — ألوان أكسنت مميزة.</p></div>
+        <div class="feat-card"><div class="feat-icon">🤖</div><h3>نصائح ذكية مدمجة</h3><p>مكتبة نصائح مدمجة تعمل بدون إنترنت — مخصصة لكل درس وتمرين. لا حاجة لاتصال دائم.</p></div>
+        <div class="feat-card"><div class="feat-icon">💽</div><h3>SQLite محلية</h3><p>قاعدة بيانات محلية دائمة — كل تقدمك، إعداداتك، وإنجازاتك محفوظة بشكل آمن. لا فقدان للبيانات أبداً.</p></div>
+        <div class="feat-card"><div class="feat-icon">🎵</div><h3>موسيقى ومؤثرات</h3><p>10 مقطوعات موسيقية خلفية للتركيز، مؤثرات صوتية للكتابة والأخطاء والإنجازات — تحكم كامل.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== DETAILED FEATURES ===== -->
+  <section class="section-pad" style="background:var(--bg-raised);">
+    <div class="section-wrap">
+      <div class="section-header" id="detailHeader">
+        <div class="badge"><span class="dot"></span>Deep Dive</div>
+        <h2 class="sec-title">شرح <span class="gold-grad">مفصل</span></h2>
+        <p class="sec-sub" style="margin:0 auto;">نظرة عميقة على كل جزء من التطبيق</p>
+      </div>
+      <div class="detail-grid" id="detailGrid">
+        <div class="detail-card">
+          <div class="d-icon">📖</div>
+          <h3>الدروس النظرية</h3>
+          <p>40 درساً مقسمة بين العربية والإنجليزية، تغطي:</p>
+          <ul>
+            <li>أساسيات وضع اليدين والجلوس الصحيح</li>
+            <li>الصف الرئيسي (منفح / ASDF JKL;)</li>
+            <li>الحروف العلوية والسفلية</li>
+            <li>الأرقام والرموز وعلامات الترقيم</li>
+            <li>تقنيات السرعة والإتقان</li>
+          </ul>
+        </div>
+        <div class="detail-card">
+          <div class="d-icon">⌨️</div>
+          <h3>التمارين العملية</h3>
+          <p>210+ تمرين مقسمة على 10 مجموعات و3 مستويات:</p>
+          <ul>
+            <li>مبتدئ: حروف وكلمات أساسية</li>
+            <li>متوسط: جمل ونصوص قصيرة</li>
+            <li>متقدم: نصوص طويلة وسرعة عالية</li>
+            <li>تمارين مخصصة (أنشئ تمارينك بنفسك)</li>
+          </ul>
+        </div>
+        <div class="detail-card">
+          <div class="d-icon">🎮</div>
+          <h3>الألعاب التفاعلية</h3>
+          <p>5 ألعاب مصممة لتحسين سرعتك ودقتك بطريقة ممتعة:</p>
+          <ul>
+            <li>🌊 الكلمات المتساقطة — سرعة ورد فعل</li>
+            <li>🎯 قناص مسافة — دقة وتركيز</li>
+            <li>🥷 نينجا الحروف — سرعة رد فعل</li>
+            <li>🧠 ذاكرة الطباعة — ذاكرة عضلية</li>
+            <li>🏎️ سباق السرعة — تحمل وسرعة</li>
+          </ul>
+        </div>
+        <div class="detail-card">
+          <div class="d-icon">📊</div>
+          <h3>الإحصائيات والتتبع</h3>
+          <p>نظام متكامل لتحليل أدائك:</p>
+          <ul>
+            <li>سرعة الكتابة (WPM) مع رسوم بيانية</li>
+            <li>نسبة الدقة والأخطاء</li>
+            <li>Streak الأيام المتتالية</li>
+            <li>إحصائيات أسبوعية وشهرية</li>
+            <li>نظام XP ومستويات التقدم</li>
+          </ul>
+        </div>
+        <div class="detail-card">
+          <div class="d-icon">🎨</div>
+          <h3>نظام الثيمات</h3>
+          <p>10 ثيمات احترافية مقسمة إلى:</p>
+          <ul>
+            <li>5 ثيمات غامقة: نيلي، ياقوتي، بحري، غابي، فحمي</li>
+            <li>5 ثيمات فاتحة: ذهبي، خوخي، سماوي، نعناعي، رمادي</li>
+            <li>Glassmorphism تأثير زجاجي اختياري</li>
+            <li>تبديل فوري بين الثيمات</li>
+          </ul>
+        </div>
+        <div class="detail-card">
+          <div class="d-icon">🦀</div>
+          <h3>التقنيات المستخدمة</h3>
+          <p>TypoMaster مبني على أحدث التقنيات:</p>
+          <ul>
+            <li>React 19 + TypeScript للواجهة</li>
+            <li>Tauri 2 + Rust للـ backend</li>
+            <li>SQLite (rusqlite) لتخزين البيانات</li>
+            <li>Tailwind CSS 4 للتصميم</li>
+            <li>Vite 6 لبناء سريع</li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- ===== SCREENSHOTS ===== -->
-  <section id="screenshots" style="padding:80px 24px; background:var(--bg-raised);">
-    <div style="max-width:1280px; margin:0 auto;">
-      <div style="text-align:center; margin-bottom:60px; opacity:0;" id="shotHeader">
-        <div class="section-label" style="margin:0 auto 16px;"><span></span>Gallery</div>
-        <h2 class="section-title">لقطات الشاشة</h2>
-        <p class="section-sub" style="margin:0 auto;">تصميم عصري ونظيف يعكس جودة التطبيق وتجربة المستخدم</p>
+  <section id="screenshots" class="section-pad">
+    <div class="section-wrap">
+      <div class="section-header" id="shotHeader">
+        <div class="badge"><span class="dot"></span>Gallery</div>
+        <h2 class="sec-title">لقطات الشاشة</h2>
+        <p class="sec-sub" style="margin:0 auto;">تصميم عصري ونظيف يعكس جودة التطبيق وتجربة المستخدم</p>
       </div>
-      <div class="screenshot-grid" id="shotGrid">
-        <div class="shot-card" onclick="openLightbox('../img/dashboard.png')">
-          <img src="../img/dashboard.png" alt="Dashboard" loading="lazy">
-          <div class="overlay"></div>
-          <div class="label">📊 لوحة التحكم</div>
-        </div>
-        <div class="shot-card" onclick="openLightbox('../img/lessons.png')">
-          <img src="../img/lessons.png" alt="Lessons" loading="lazy">
-          <div class="overlay"></div>
-          <div class="label">📚 الدروس النظرية</div>
-        </div>
-        <div class="shot-card" onclick="openLightbox('../img/exercises.png')">
-          <img src="../img/exercises.png" alt="Exercises" loading="lazy">
-          <div class="overlay"></div>
-          <div class="label">⌨️ التمارين</div>
-        </div>
-        <div class="shot-card" onclick="openLightbox('../img/games.png')">
-          <img src="../img/games.png" alt="Games" loading="lazy">
-          <div class="overlay"></div>
-          <div class="label">🎮 الألعاب</div>
-        </div>
-        <div class="shot-card" onclick="openLightbox('../img/profile.png')">
-          <img src="../img/profile.png" alt="Profile" loading="lazy">
-          <div class="overlay"></div>
-          <div class="label">🏆 الملف الشخصي</div>
-        </div>
-        <div class="shot-card" onclick="openLightbox('../img/settings.png')">
-          <img src="../img/settings.png" alt="Settings" loading="lazy">
-          <div class="overlay"></div>
-          <div class="label">⚙️ الإعدادات</div>
-        </div>
+      <div class="shot-grid" id="shotGrid">
+        <div class="shot-card" onclick="openLB('../img/dashboard.png')"><img src="../img/dashboard.png" alt="Dashboard" loading="lazy"><div class="lbl">📊 لوحة التحكم</div></div>
+        <div class="shot-card" onclick="openLB('../img/lessons.png')"><img src="../img/lessons.png" alt="Lessons" loading="lazy"><div class="lbl">📚 الدروس النظرية</div></div>
+        <div class="shot-card" onclick="openLB('../img/exercises.png')"><img src="../img/exercises.png" alt="Exercises" loading="lazy"><div class="lbl">⌨️ التمارين</div></div>
+        <div class="shot-card" onclick="openLB('../img/games.png')"><img src="../img/games.png" alt="Games" loading="lazy"><div class="lbl">🎮 الألعاب</div></div>
+        <div class="shot-card" onclick="openLB('../img/profile.png')"><img src="../img/profile.png" alt="Profile" loading="lazy"><div class="lbl">🏆 الملف الشخصي</div></div>
+        <div class="shot-card" onclick="openLB('../img/settings.png')"><img src="../img/settings.png" alt="Settings" loading="lazy"><div class="lbl">⚙️ الإعدادات</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== THEMES ===== -->
+  <section class="section-pad" style="background:var(--bg-raised);">
+    <div class="section-wrap">
+      <div class="section-header" id="themeHeader">
+        <div class="badge"><span class="dot"></span>Themes</div>
+        <h2 class="sec-title">10 ثيمات <span class="gold-grad">احترافية</span></h2>
+        <p class="sec-sub" style="margin:0 auto;">اختر ما يناسب ذوقك مع 5 ثيمات غامقة و5 فاتحة</p>
+      </div>
+      <div class="theme-grid" id="themeGrid">
+        <div class="theme-card"><div class="swatch" style="background:linear-gradient(135deg,#0E0C1A,#1A1730,#A78BFA)"></div><h4>🌙 نيلي غامق</h4><p>Indigo Dark — أكسنت بنفسجي</p></div>
+        <div class="theme-card"><div class="swatch" style="background:linear-gradient(135deg,#1A0F12,#2C1A20,#34D399)"></div><h4>🌙 ياقوتي غامق</h4><p>Ruby Dark — أكسنت زمردي</p></div>
+        <div class="theme-card"><div class="swatch" style="background:linear-gradient(135deg,#0C1628,#172442,#F59E0B)"></div><h4>🌙 بحري غامق</h4><p>Navy Dark — أكسنت ذهبي</p></div>
+        <div class="theme-card"><div class="swatch" style="background:linear-gradient(135deg,#0A1812,#142E22,#FBBF24)"></div><h4>🌙 غابي غامق</h4><p>Forest Dark — أكسنت كهرماني</p></div>
+        <div class="theme-card"><div class="swatch" style="background:linear-gradient(135deg,#111118,#1D1D2A,#22D3EE)"></div><h4>🌙 فحمي غامق</h4><p>Charcoal Dark — أكسنت سيان</p></div>
+        <div class="theme-card"><div class="swatch" style="background:linear-gradient(135deg,#FBF8F2,#F4EFE7,#B8860B)"></div><h4>☀️ ذهبي فاتح</h4><p>Clean Light — أكسنت ذهبي عميق</p></div>
+        <div class="theme-card"><div class="swatch" style="background:linear-gradient(135deg,#FDF8F4,#F7EDE6,#8B3A4F)"></div><h4>☀️ خوخي فاتح</h4><p>Peach Light — أكسنت عنابي</p></div>
+        <div class="theme-card"><div class="swatch" style="background:linear-gradient(135deg,#F7F9FB,#EEF0F4,#1E4A6E)"></div><h4>☀️ سماوي فاتح</h4><p>Sky Light — أكسنت كحلي</p></div>
+        <div class="theme-card"><div class="swatch" style="background:linear-gradient(135deg,#F7F9F5,#EEF2EA,#1B6B4A)"></div><h4>☀️ نعناعي فاتح</h4><p>Mint Light — أكسنت زمردي</p></div>
+        <div class="theme-card"><div class="swatch" style="background:linear-gradient(135deg,#FAF7F3,#F1EDE7,#5C3D6E)"></div><h4>☀️ رمادي فاتح</h4><p>Gray Light — أكسنت برقوقي</p></div>
       </div>
     </div>
   </section>
 
   <!-- ===== STATS ===== -->
-  <section id="stats" style="padding:80px 24px;">
-    <div style="max-width:1280px; margin:0 auto;">
-      <div style="text-align:center; margin-bottom:60px; opacity:0;" id="statsHeader">
-        <div class="section-label" style="margin:0 auto 16px;"><span></span>By the Numbers</div>
-        <h2 class="section-title">إحصائيات المشروع</h2>
+  <section id="stats" class="section-pad">
+    <div class="section-wrap">
+      <div class="section-header" id="statsHeader">
+        <div class="badge"><span class="dot"></span>By the Numbers</div>
+        <h2 class="sec-title">إحصائيات المشروع</h2>
       </div>
       <div class="stats-grid" id="statsGrid">
-        <div class="stat-item">
+        <div class="stat-card">
           <div class="stat-ring">
-            <svg width="80" height="80" viewBox="0 0 80 80">
-              <defs><linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FFC800"/><stop offset="100%" stop-color="#FFA000"/></linearGradient></defs>
-              <circle class="bg" cx="40" cy="40" r="35"/>
-              <circle class="fg" id="ring1" cx="40" cy="40" r="35" style="--target:44"/>
-            </svg>
-            <div class="stat-val"><span class="counter" data-target="15">0</span><span style="font-size:0.6rem;">K+</span></div>
+            <svg width="72" height="72" viewBox="0 0 72 72"><defs><linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FFC800"/><stop offset="100%" stop-color="#FFA000"/></linearGradient></defs><circle class="bg" cx="36" cy="36" r="32"/><circle class="fg" id="ring1" cx="36" cy="36" r="32" style="--t:44"/></svg>
+            <div class="stat-val"><span class="counter" data-target="15">0</span><span style="font-size:0.55rem;">K+</span></div>
           </div>
           <div class="stat-label">سطر كود</div>
         </div>
-        <div class="stat-item">
+        <div class="stat-card">
           <div class="stat-ring">
-            <svg width="80" height="80" viewBox="0 0 80 80">
-              <circle class="bg" cx="40" cy="40" r="35"/>
-              <circle class="fg" id="ring2" cx="40" cy="40" r="35" style="--target:22"/>
-            </svg>
-            <div class="stat-val"><span class="counter" data-target="210">0</span><span style="font-size:0.6rem;">+</span></div>
+            <svg width="72" height="72" viewBox="0 0 72 72"><circle class="bg" cx="36" cy="36" r="32"/><circle class="fg" id="ring2" cx="36" cy="36" r="32" style="--t:22"/></svg>
+            <div class="stat-val"><span class="counter" data-target="210">0</span><span style="font-size:0.55rem;">+</span></div>
           </div>
           <div class="stat-label">تمرين عملي</div>
         </div>
-        <div class="stat-item">
+        <div class="stat-card">
           <div class="stat-ring">
-            <svg width="80" height="80" viewBox="0 0 80 80">
-              <circle class="bg" cx="40" cy="40" r="35"/>
-              <circle class="fg" id="ring3" cx="40" cy="40" r="35" style="--target:110"/>
-            </svg>
+            <svg width="72" height="72" viewBox="0 0 72 72"><circle class="bg" cx="36" cy="36" r="32"/><circle class="fg" id="ring3" cx="36" cy="36" r="32" style="--t:110"/></svg>
             <div class="stat-val"><span class="counter" data-target="40">0</span></div>
           </div>
           <div class="stat-label">درس نظري</div>
         </div>
-        <div class="stat-item">
+        <div class="stat-card">
           <div class="stat-ring">
-            <svg width="80" height="80" viewBox="0 0 80 80">
-              <circle class="bg" cx="40" cy="40" r="35"/>
-              <circle class="fg" id="ring4" cx="40" cy="40" r="35" style="--target:154"/>
-            </svg>
+            <svg width="72" height="72" viewBox="0 0 72 72"><circle class="bg" cx="36" cy="36" r="32"/><circle class="fg" id="ring4" cx="36" cy="36" r="32" style="--t:154"/></svg>
             <div class="stat-val"><span class="counter" data-target="5">0</span></div>
           </div>
           <div class="stat-label">ألعاب تفاعلية</div>
@@ -793,103 +889,160 @@
   </section>
 
   <!-- ===== GAMES ===== -->
-  <section id="games" style="padding:80px 24px; background:var(--bg-raised);">
-    <div style="max-width:1280px; margin:0 auto;">
-      <div style="text-align:center; margin-bottom:60px; opacity:0;" id="gamesHeader">
-        <div class="section-label" style="margin:0 auto 16px;"><span></span>Games</div>
-        <h2 class="section-title">ألعاب تفاعلية<br><span class="gold-text">لتعلم ممتع</span></h2>
-        <p class="section-sub" style="margin:0 auto;">تعلّم بدون ملل — 5 ألعاب مصممة لتحسين سرعتك ودقتك</p>
+  <section id="games" class="section-pad" style="background:var(--bg-raised);">
+    <div class="section-wrap">
+      <div class="section-header" id="gamesHeader">
+        <div class="badge"><span class="dot"></span>Games</div>
+        <h2 class="sec-title">ألعاب تفاعلية<br><span class="gold-grad">لتعلم ممتع</span></h2>
+        <p class="sec-sub" style="margin:0 auto;">تعلّم بدون ملل — 5 ألعاب مصممة لتحسين سرعتك ودقتك</p>
       </div>
       <div class="games-grid" id="gamesGrid">
-        <div class="game-card"><div class="game-emoji">🌊</div><h3>الكلمات المتساقطة</h3><p>كلمات تسقط من الأعلى — اكتبها قبل أن تصل للأرض. تدريب على السرعة ورد الفعل.</p></div>
-        <div class="game-card"><div class="game-emoji">🎯</div><h3>قناص مسافة</h3><p>كلمات تظهر عشوائياً — أصبها قبل اختفائها. دقة وتركيز في كل طلقة.</p></div>
-        <div class="game-card"><div class="game-emoji">🥷</div><h3>نينجا الحروف</h3><p>الحروف تقفز وتختفي — اكتبها في الوقت المحدد. سرعة رد فعل قصوى.</p></div>
-        <div class="game-card"><div class="game-emoji">🧠</div><h3>ذاكرة الطباعة</h3><p>الكلمة تظهر ثم تختفي — اكتبها من الذاكرة. تقوية الذاكرة العضلية.</p></div>
-        <div class="game-card"><div class="game-emoji">🏎️</div><h3>سباق السرعة</h3><p>سباق مع الزمن — أكتب أكبر عدد من الكلمات الصحيحة. تحمل وسرعة معاً.</p></div>
+        <div class="game-card"><div class="game-e">🌊</div><h3>الكلمات المتساقطة</h3><p>كلمات تسقط من الأعلى — اكتبها قبل أن تصل للأرض. تدريب على السرعة ورد الفعل.</p></div>
+        <div class="game-card"><div class="game-e">🎯</div><h3>قناص مسافة</h3><p>كلمات تظهر عشوائياً — أصبها قبل اختفائها. دقة وتركيز في كل طلقة.</p></div>
+        <div class="game-card"><div class="game-e">🥷</div><h3>نينجا الحروف</h3><p>الحروف تقفز وتختفي — اكتبها في الوقت المحدد. سرعة رد فعل قصوى.</p></div>
+        <div class="game-card"><div class="game-e">🧠</div><h3>ذاكرة الطباعة</h3><p>الكلمة تظهر ثم تختفي — اكتبها من الذاكرة. تقوية الذاكرة العضلية.</p></div>
+        <div class="game-card"><div class="game-e">🏎️</div><h3>سباق السرعة</h3><p>سباق مع الزمن — أكتب أكبر عدد من الكلمات الصحيحة. تحمل وسرعة معاً.</p></div>
       </div>
     </div>
   </section>
 
   <!-- ===== ARCHITECTURE ===== -->
-  <section style="padding:80px 24px;">
-    <div style="max-width:960px; margin:0 auto;">
-      <div style="text-align:center; margin-bottom:60px; opacity:0;" id="archHeader">
-        <div class="section-label" style="margin:0 auto 16px;"><span></span>Architecture</div>
-        <h2 class="section-title">الهندسة التقنية</h2>
-        <p class="section-sub" style="margin:0 auto;">React → Tauri IPC → Rust → SQLite — تصميم نظيف وأداء عالٍ</p>
+  <section class="section-pad">
+    <div class="section-wrap">
+      <div class="section-header" id="archHeader">
+        <div class="badge"><span class="dot"></span>Architecture</div>
+        <h2 class="sec-title">الهندسة التقنية</h2>
+        <p class="sec-sub" style="margin:0 auto;">React ← Tauri IPC ← Rust ← SQLite — تصميم نظيف وأداء عالٍ</p>
       </div>
-      <div class="arch-flow" id="archFlow">
-        <div class="arch-node"><div class="emoji">⚛️</div><div class="name">React 19</div><div class="desc">Frontend</div></div>
-        <div class="arch-arrow">←</div>
-        <div class="arch-node"><div class="emoji">🔄</div><div class="name">Tauri IPC</div><div class="desc">invoke()</div></div>
-        <div class="arch-arrow">←</div>
-        <div class="arch-node"><div class="emoji">🦀</div><div class="name">Rust</div><div class="desc">30 Commands</div></div>
-        <div class="arch-arrow">←</div>
-        <div class="arch-node"><div class="emoji">🗄️</div><div class="name">SQLite</div><div class="desc">7 Tables</div></div>
+      <div class="arch-wrap" id="archFlow">
+        <div class="arch-node"><div class="e">⚛️</div><div class="n">React 19</div><div class="d">واجهة المستخدم</div></div>
+        <div class="arch-arr">←</div>
+        <div class="arch-node"><div class="e">🔄</div><div class="n">Tauri IPC</div><div class="d">invoke()</div></div>
+        <div class="arch-arr">←</div>
+        <div class="arch-node"><div class="e">🦀</div><div class="n">Rust</div><div class="d">30 أمر</div></div>
+        <div class="arch-arr">←</div>
+        <div class="arch-node"><div class="e">🗄️</div><div class="n">SQLite</div><div class="d">7 جداول</div></div>
+      </div>
+      <div style="margin-top:32px; text-align:center; color:var(--text-muted); font-size:0.8rem; font-family:'JetBrains Mono',monospace; max-width:600px; margin-left:auto; margin-right:auto; background:rgba(20,24,43,0.15); border:1px solid rgba(255,255,255,0.02); border-radius:8px; padding:14px;">
+        <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+          <span style="color:var(--accent-blue);">useEffect()</span>
+          <span style="color:var(--text-muted);">→</span>
+          <span style="color:var(--gold);">invoke()</span>
+          <span style="color:var(--text-muted);">→</span>
+          <span style="color:var(--accent-green);">Tauri Command</span>
+          <span style="color:var(--text-muted);">→</span>
+          <span style="color:var(--accent-purple);">SQL Query</span>
+          <span style="color:var(--text-muted);">→</span>
+          <span style="color:var(--accent-blue);">JSON Response</span>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- ===== ROADMAP ===== -->
-  <section id="roadmap" style="padding:80px 24px; background:var(--bg-raised);">
-    <div style="max-width:640px; margin:0 auto;">
-      <div style="text-align:center; margin-bottom:60px; opacity:0;" id="roadmapHeader">
-        <div class="section-label" style="margin:0 auto 16px;"><span></span>Roadmap</div>
-        <h2 class="section-title">خريطة الطريق</h2>
+  <section id="roadmap" class="section-pad" style="background:var(--bg-raised);">
+    <div class="section-wrap" style="max-width:640px;">
+      <div class="section-header" id="roadmapHeader">
+        <div class="badge"><span class="dot"></span>Roadmap</div>
+        <h2 class="sec-title">خريطة الطريق</h2>
+        <p class="sec-sub" style="margin:0 auto;">ما نخطط له في المستقبل</p>
       </div>
       <div class="roadmap" id="roadmapList">
-        <div class="roadmap-item"><div class="tag">v1.1 — قريباً</div><h4>macOS & Linux</h4><p>دعم أنظمة التشغيل الأخرى + تحدي يومي + تصدير الإحصائيات CSV/PDF + تحليل كل إصبع.</p></div>
-        <div class="roadmap-item"><div class="tag">v1.2 — مخطط</div><h4>حسابات متعددة</h4><p>Multi-profile، متجر مجتمعي للتمارين، وضع التدريب العميق، دعم Dvorak/Colemak.</p></div>
-        <div class="roadmap-item"><div class="tag">v2.0 — طموح</div><h4>تنافس متعدد اللاعبين</h4><p>Competitive Multiplayer، واجهة HTML/CSS، Course Builder، تكامل مع GitHub API.</p></div>
+        <div class="rm-item"><div class="tag">v1.1 — قريباً</div><h4>دعم أنظمة إضافية</h4><p>macOS & Linux — تحدٍ يومي — تصدير الإحصائيات CSV/PDF — تحليل أداء كل إصبع على حدة.</p></div>
+        <div class="rm-item"><div class="tag">v1.2 — مخطط</div><h4>ميزات متقدمة</h4><p>حسابات متعددة (Multi-profile) — متجر مجتمعي للتمارين — وضع التدريب العميق (Deep Practice) — دعم لوحات Dvorak/Colemak.</p></div>
+        <div class="rm-item"><div class="tag">v2.0 — طموح</div><h4>تجربة اجتماعية</h4><p>تنافس متعدد اللاعبين في الوقت الفعلي — واجهة HTML/CSS للمبتدئين — Course Builder — تكامل مع GitHub API.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== DOWNLOAD ===== -->
+  <section class="section-pad" style="background:var(--bg-raised);">
+    <div class="section-wrap" style="max-width:720px;">
+      <div class="section-header" id="dlHeader">
+        <div class="badge"><span class="dot"></span>Download</div>
+        <h2 class="sec-title">طرق <span class="gold-grad">التثبيت</span></h2>
+        <p class="sec-sub" style="margin:0 auto;">اختر الطريقة الأنسب لك لبدء استخدام TypoMaster</p>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;" id="dlGrid">
+        <div class="card" style="padding:24px; text-align:center;">
+          <div style="font-size:2rem; margin-bottom:10px;">📦</div>
+          <h3 style="font-size:0.95rem; font-weight:700; margin-bottom:4px;">MSI Installer</h3>
+          <p style="font-size:0.78rem; color:var(--text-muted); line-height:1.6; margin-bottom:14px;">مثبت ويندوز الرسمي. طريقة التثبيت الموصى بها للمستخدمين العاديين.</p>
+          <a href="https://github.com/alhmli70/typomaster/releases" class="btn-primary" style="padding:8px 20px; font-size:0.8rem;">تحميل MSI</a>
+        </div>
+        <div class="card" style="padding:24px; text-align:center;">
+          <div style="font-size:2rem; margin-bottom:10px;">📁</div>
+          <h3 style="font-size:0.95rem; font-weight:700; margin-bottom:4px;">Portable EXE</h3>
+          <p style="font-size:0.78rem; color:var(--text-muted); line-height:1.6; margin-bottom:14px;">نسخة محمولة لا تحتاج تثبيت. شغّل التطبيق مباشرة من أي مجلد.</p>
+          <a href="https://github.com/alhmli70/typomaster/releases" class="btn-secondary" style="padding:8px 20px; font-size:0.8rem;">تحميل ZIP</a>
+        </div>
+        <div class="card" style="padding:24px; text-align:center;">
+          <div style="font-size:2rem; margin-bottom:10px;">🔧</div>
+          <h3 style="font-size:0.95rem; font-weight:700; margin-bottom:4px;">Build from Source</h3>
+          <p style="font-size:0.78rem; color:var(--text-muted); line-height:1.6; margin-bottom:14px;">للمطورين — ابنِ التطبيق بنفسك من المصدر. يتطلب Node.js 20+ و Rust.</p>
+          <a href="https://github.com/alhmli70/typomaster?tab=readme-ov-file#-building-from-source" class="btn-secondary" style="padding:8px 20px; font-size:0.8rem;">دليل البناء</a>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- ===== FAQ ===== -->
-  <section id="faq" style="padding:80px 24px;">
-    <div style="max-width:640px; margin:0 auto;">
-      <div style="text-align:center; margin-bottom:60px; opacity:0;" id="faqHeader">
-        <div class="section-label" style="margin:0 auto 16px;"><span></span>FAQ</div>
-        <h2 class="section-title">الأسئلة الشائعة</h2>
+  <section id="faq" class="section-pad">
+    <div class="section-wrap" style="max-width:640px;">
+      <div class="section-header" id="faqHeader">
+        <div class="badge"><span class="dot"></span>FAQ</div>
+        <h2 class="sec-title">الأسئلة الشائعة</h2>
       </div>
       <div id="faqList">
         <div class="faq-item" onclick="toggleFaq(this)">
-          <div class="faq-q">كيف أحمل التطبيق؟ <span>+</span></div>
-          <div class="faq-a">اذهب إلى صفحة Releases على GitHub، حمّل TypoMaster_1.0.0_x64_en-US.msi، ثم شغّله. سهل وسريع.</div>
+          <div class="faq-q">ما هو TypoMaster بالضبط؟ <span class="icon">+</span></div>
+          <div class="faq-a">TypoMaster هو برنامج تدريب طباعة احترافي مجاني ومفتوح المصدر. يدعم العربية والإنجليزية، ويوفر 210+ تمرين، 40 درس نظري، 5 ألعاب تفاعلية، وتحليلات أداء متقدمة. مبني باستخدام React + Tauri + Rust.</div>
         </div>
         <div class="faq-item" onclick="toggleFaq(this)">
-          <div class="faq-q">هل التطبيق متوفر لأنظمة أخرى؟ <span>+</span></div>
-          <div class="faq-a">حالياً Windows فقط. دعم macOS و Linux قادم في الإصدار 1.1. يمكنك بناء التطبيق من المصدر لأي نظام.</div>
+          <div class="faq-q">كيف أحمل التطبيق؟ <span class="icon">+</span></div>
+          <div class="faq-a">اذهب إلى صفحة Releases على GitHub، اختر "TypoMaster_1.0.0_x64_en-US.msi" للنسخة المثبتة أو "TypoMaster_x64_portable.zip" للنسخة المحمولة. فك الضغط وشغّل.</div>
         </div>
         <div class="faq-item" onclick="toggleFaq(this)">
-          <div class="faq-q">هل أحتاج اتصال إنترنت لاستخدامه؟ <span>+</span></div>
-          <div class="faq-a">لا. TypoMaster يعمل بشكل كامل بدون إنترنت. النصائح الذكية مدمجة في التطبيق. الإنترنت مطلوب فقط للتحميل الأولي.</div>
+          <div class="faq-q">هل التطبيق متوفر لأنظمة أخرى؟ <span class="icon">+</span></div>
+          <div class="faq-a">حالياً Windows 10/11 فقط (64-bit). دعم macOS و Linux قادم في الإصدار 1.1. يمكنك بناء التطبيق من المصدر لأي نظام يدعمه Tauri.</div>
         </div>
         <div class="faq-item" onclick="toggleFaq(this)">
-          <div class="faq-q">كيف أعيد تعيين كل البيانات؟ <span>+</span></div>
-          <div class="faq-a">الإعدادات ← متقدم ← إعادة تعيين كل البيانات، أو احذف ملف قاعدة البيانات من %APPDATA%/com.typomaster.desktop/TypoMaster.db.</div>
+          <div class="faq-q">هل أحتاج اتصال إنترنت لاستخدامه؟ <span class="icon">+</span></div>
+          <div class="faq-a">لا. TypoMaster يعمل بشكل كامل بدون إنترنت. كل المحتوى، النصائح الذكية، وقاعدة البيانات مدمجة في التطبيق. الإنترنت مطلوب فقط للتحميل الأولي.</div>
         </div>
         <div class="faq-item" onclick="toggleFaq(this)">
-          <div class="faq-q">الموسيقى لا تعمل؟ <span>+</span></div>
-          <div class="faq-a">تأكد من وجود ملفات public/music/track-1.mp3 إلى track-10.mp3. إذا كانت مفقودة، أعد بناء التطبيق أو حمّل الموسيقى من GitHub.</div>
+          <div class="faq-q">هل البرنامج مجاني حقاً؟ <span class="icon">+</span></div>
+          <div class="faq-a">نعم، TypoMaster مجاني تماماً ومفتوح المصدر تحت رخصة MIT. لا إعلانات، لا اشتراكات، لا بيانات مخفية. يمكنك استخدامه وتعديله وتوزيعه بحرية.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">كيف أعيد تعيين كل البيانات؟ <span class="icon">+</span></div>
+          <div class="faq-a">الإعدادات ← متقدم ← إعادة تعيين كل البيانات. أو احذف يدوياً ملف: %APPDATA%/com.typomaster.desktop/TypoMaster.db</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">ما هي متطلبات النظام؟ <span class="icon">+</span></div>
+          <div class="faq-a">Windows 10/11 64-bit، WebView2 Runtime (مضمن في Windows 11)، ~50 MB مساحة تخزين، 4 GB RAM موصى بها.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">كيف يمكنني المساهمة في المشروع؟ <span class="icon">+</span></div>
+          <div class="faq-a">Fork المشروع على GitHub، نفذ التغييرات، تأكد من npm run lint بدون أخطاء، ثم أرسل Pull Request. راجع CONTRIBUTING guidelines في README.</div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ===== CTA ===== -->
-  <section class="cta-section" id="cta">
-    <div class="cta-bg">
-      <div class="orb orb-1"></div>
-      <div class="orb orb-2"></div>
-    </div>
-    <div style="max-width:640px; margin:0 auto; position:relative; z-index:2; opacity:0;" id="ctaContent">
-      <div class="section-label" style="margin:0 auto 16px; width:fit-content;"><span></span>Get Started</div>
-      <h2 class="section-title" style="font-size:clamp(2rem,4vw,3rem);">ابدأ رحلة الإتقان الآن</h2>
-      <p style="color:var(--text-muted); font-size:1.05rem; margin-bottom:36px; line-height:1.8;">TypoMaster هو الرفيق المثالي لتطوير مهارات الطباعة — سواء كنت مبتدئاً أو محترفاً.</p>
-      <div style="display:flex; flex-wrap:wrap; gap:12px; justify-content:center;">
+  <section class="cta-sec" id="cta">
+    <div class="cta-bg"><div class="orb o1"></div><div class="orb o2"></div></div>
+    <div style="max-width:600px; margin:0 auto; position:relative; z-index:2;" id="ctaContent">
+      <div class="badge" style="margin:0 auto 14px; width:fit-content;"><span class="dot"></span>Get Started</div>
+      <h2 class="sec-title" style="font-size:clamp(1.8rem,3.5vw,2.6rem);">ابدأ رحلة الإتقان الآن</h2>
+      <p style="color:var(--text-muted); font-size:1rem; margin-bottom:32px; line-height:1.8;">TypoMaster هو الرفيق المثالي لتطوير مهارات الطباعة — سواء كنت مبتدئاً أو محترفاً. حمّله مجاناً وابدأ التطوّر اليوم.</p>
+      <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
         <a href="https://github.com/alhmli70/typomaster/releases" class="btn-primary">تحميل مجاني</a>
-        <a href="https://github.com/alhmli70/typomaster" class="btn-secondary">GitHub</a>
+        <a href="https://github.com/alhmli70/typomaster" class="btn-secondary">GitHub ←</a>
+      </div>
+      <div style="margin-top:20px; display:flex; justify-content:center; gap:16px; font-size:0.7rem; color:rgba(255,255,255,0.08); font-family:'JetBrains Mono',monospace;">
+        <span>React 19</span><span>•</span><span>Tauri 2</span><span>•</span><span>Rust</span><span>•</span><span>SQLite</span>
       </div>
     </div>
   </section>
@@ -897,9 +1050,9 @@
   <!-- ===== FOOTER ===== -->
   <footer>
     <div class="footer-inner">
-      <div class="copy">
-        <span class="mark">T</span>
-        TypoMaster — <span style="color:var(--text-muted);">MIT License</span>
+      <div class="footer-copy">
+        <span class="m">T</span>
+        TypoMaster — MIT License
       </div>
       <div class="footer-links">
         <a href="https://github.com/alhmli70/typomaster">GitHub</a>
@@ -911,24 +1064,26 @@
     </div>
   </footer>
 
+  <svg width="0" height="0" style="position:absolute;"><defs><linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FFC800"/><stop offset="100%" stop-color="#FFA000"/></linearGradient></defs></svg>
+
   <script>
     // === LIGHTBOX ===
-    function openLightbox(src) {
-      document.getElementById('lightbox-img').src = src;
-      document.getElementById('lightbox').classList.add('open');
+    function openLB(src) {
+      document.getElementById('lb-img').src = src;
+      document.getElementById('lb').classList.add('open');
     }
-    function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
-    document.addEventListener('keydown', e => { if(e.key === 'Escape') closeLightbox(); });
+    function closeLB() {
+      document.getElementById('lb').classList.remove('open');
+    }
+    document.addEventListener('keydown', e => { if(e.key === 'Escape') closeLB(); });
 
     // === FAQ ===
-    function toggleFaq(el) {
-      el.classList.toggle('open');
-    }
+    function toggleFaq(el) { el.classList.toggle('open'); }
 
     // === GSAP ===
     document.addEventListener('DOMContentLoaded', () => {
       if (typeof gsap === 'undefined') {
-        document.querySelectorAll('[style*="opacity:0"]').forEach(el => el.style.opacity = '1');
+        document.querySelectorAll('[style*="opacity"]').forEach(el => el.style.opacity = '1');
         return;
       }
       gsap.registerPlugin(ScrollTrigger);
@@ -941,90 +1096,113 @@
         }
       });
 
-      // Hero
-      const heroTL = gsap.timeline({ defaults: { ease: 'power3.out' } });
-      heroTL
-        .to('#heroBadge', { opacity: 1, y: 0, duration: 0.6 })
-        .to('#heroTitle', { opacity: 1, y: 0, duration: 0.8 }, '-=0.3')
-        .to('#heroDesc', { opacity: 1, y: 0, duration: 0.8 }, '-=0.4')
-        .to('#heroActions', { opacity: 1, y: 0, duration: 0.8 }, '-=0.5')
-        .to('#heroTech', { opacity: 1, y: 0, duration: 0.6 }, '-=0.4')
-        .to('#heroMockup', { opacity: 1, x: 0, duration: 1, ease: 'power2.out' }, '-=0.8');
+      // Hero — use from() for proper fade-up
+      const hero = gsap.timeline({ defaults: { ease: 'power3.out', opacity: 0 } });
+      hero
+        .from('#heroBadge', { y: -16, duration: 0.5 })
+        .from('#heroTitle', { y: 30, duration: 0.7 }, '-=0.2')
+        .from('#heroDesc', { y: 24, duration: 0.7 }, '-=0.4')
+        .from('#heroActions', { y: 24, duration: 0.6 }, '-=0.4')
+        .from('#heroTech', { y: 20, duration: 0.5 }, '-=0.3')
+        .from('#heroMockup', { x: 40, duration: 0.9, ease: 'power2.out' }, '-=0.6');
+
+      // About
+      gsap.from('#aboutHeader', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#about', start: 'top 75%' } });
+      gsap.from('#aboutGrid > div', { opacity: 0, y: 30, duration: 0.5, stagger: 0.08, scrollTrigger: { trigger: '#aboutGrid', start: 'top 80%' } });
 
       // Features
-      gsap.from('#featHeader', { opacity: 0, y: 60, duration: 0.8, scrollTrigger: { trigger: '#features', start: 'top 70%' } });
-      gsap.from('.feat-card', { opacity: 0, y: 40, duration: 0.6, stagger: 0.06, scrollTrigger: { trigger: '#featGrid', start: 'top 80%' } });
+      gsap.from('#featHeader', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#features', start: 'top 75%' } });
+      gsap.from('.feat-card', { opacity: 0, y: 30, duration: 0.5, stagger: 0.05, scrollTrigger: { trigger: '#featGrid', start: 'top 80%' } });
+
+      // Detailed features
+      gsap.from('#detailHeader', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#detailHeader', start: 'top 80%' } });
+      gsap.from('.detail-card', { opacity: 0, y: 30, duration: 0.5, stagger: 0.07, scrollTrigger: { trigger: '#detailGrid', start: 'top 80%' } });
 
       // Screenshots
-      gsap.from('#shotHeader', { opacity: 0, y: 60, duration: 0.8, scrollTrigger: { trigger: '#screenshots', start: 'top 70%' } });
-      gsap.from('.shot-card', { opacity: 0, y: 40, duration: 0.6, stagger: 0.08, scrollTrigger: { trigger: '#shotGrid', start: 'top 80%' } });
+      gsap.from('#shotHeader', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#screenshots', start: 'top 75%' } });
+      gsap.from('.shot-card', { opacity: 0, y: 30, duration: 0.5, stagger: 0.06, scrollTrigger: { trigger: '#shotGrid', start: 'top 80%' } });
+
+      // Themes
+      gsap.from('#themeHeader', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#themeHeader', start: 'top 80%' } });
+      gsap.from('.theme-card', { opacity: 0, y: 20, duration: 0.4, stagger: 0.04, scrollTrigger: { trigger: '#themeGrid', start: 'top 80%' } });
 
       // Stats
-      gsap.from('#statsHeader', { opacity: 0, y: 60, duration: 0.8, scrollTrigger: { trigger: '#stats', start: 'top 70%' } });
-      gsap.from('.stat-item', { opacity: 0, y: 40, duration: 0.6, stagger: 0.1, scrollTrigger: { trigger: '#statsGrid', start: 'top 80%' } });
+      gsap.from('#statsHeader', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#stats', start: 'top 75%' } });
+      gsap.from('.stat-card', { opacity: 0, y: 30, duration: 0.5, stagger: 0.08, scrollTrigger: { trigger: '#statsGrid', start: 'top 80%' } });
 
-      // Counter + ring animation
+      // Counter + ring
       ScrollTrigger.create({
         trigger: '#statsGrid',
         start: 'top 80%',
         once: true,
         onEnter: () => {
           document.querySelectorAll('.counter').forEach(c => {
-            const target = parseInt(c.dataset.target);
+            const t = parseInt(c.dataset.target);
             const dur = 2000;
-            const start = performance.now();
-            function update(t) {
-              const p = Math.min((t - start) / dur, 1);
-              const e = 1 - Math.pow(1 - p, 3);
-              c.textContent = Math.floor(e * target);
-              if (p < 1) requestAnimationFrame(update);
+            const s = performance.now();
+            function up(n) {
+              const p = Math.min((n - s) / dur, 1);
+              c.textContent = Math.floor((1 - Math.pow(1 - p, 3)) * t);
+              if(p < 1) requestAnimationFrame(up);
             }
-            requestAnimationFrame(update);
+            requestAnimationFrame(up);
           });
-          document.querySelectorAll('.stat-ring .fg').forEach(r => { r.classList.add('visible'); });
+          document.querySelectorAll('.stat-ring .fg').forEach(r => r.classList.add('vis'));
         }
       });
 
       // Games
-      gsap.from('#gamesHeader', { opacity: 0, y: 60, duration: 0.8, scrollTrigger: { trigger: '#games', start: 'top 70%' } });
-      gsap.from('.game-card', { opacity: 0, y: 40, duration: 0.5, stagger: 0.08, scrollTrigger: { trigger: '#gamesGrid', start: 'top 80%' } });
+      gsap.from('#gamesHeader', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#games', start: 'top 75%' } });
+      gsap.from('.game-card', { opacity: 0, y: 25, duration: 0.4, stagger: 0.06, scrollTrigger: { trigger: '#gamesGrid', start: 'top 80%' } });
 
       // Architecture
-      gsap.from('#archHeader', { opacity: 0, y: 60, duration: 0.8, scrollTrigger: { trigger: '#archHeader', start: 'top 80%' } });
-      gsap.from('.arch-node', { opacity: 0, y: 30, duration: 0.5, stagger: 0.12, scrollTrigger: { trigger: '#archFlow', start: 'top 80%' } });
+      gsap.from('#archHeader', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#archHeader', start: 'top 80%' } });
+      gsap.from('.arch-node', { opacity: 0, y: 20, duration: 0.4, stagger: 0.1, scrollTrigger: { trigger: '#archFlow', start: 'top 80%' } });
 
       // Roadmap
-      gsap.from('#roadmapHeader', { opacity: 0, y: 60, duration: 0.8, scrollTrigger: { trigger: '#roadmap', start: 'top 70%' } });
-      gsap.from('.roadmap-item', { opacity: 0, x: -30, duration: 0.6, stagger: 0.15, scrollTrigger: { trigger: '#roadmapList', start: 'top 80%' } });
+      gsap.from('#roadmapHeader', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#roadmap', start: 'top 75%' } });
+      gsap.from('.rm-item', { opacity: 0, x: -20, duration: 0.5, stagger: 0.12, scrollTrigger: { trigger: '#roadmapList', start: 'top 80%' } });
+
+      // Download
+      gsap.from('#dlHeader', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#dlHeader', start: 'top 80%' } });
+      gsap.from('#dlGrid > div', { opacity: 0, y: 30, duration: 0.5, stagger: 0.08, scrollTrigger: { trigger: '#dlGrid', start: 'top 80%' } });
 
       // FAQ
-      gsap.from('#faqHeader', { opacity: 0, y: 60, duration: 0.8, scrollTrigger: { trigger: '#faq', start: 'top 70%' } });
-      gsap.from('.faq-item', { opacity: 0, y: 20, duration: 0.4, stagger: 0.08, scrollTrigger: { trigger: '#faqList', start: 'top 80%' } });
+      gsap.from('#faqHeader', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#faq', start: 'top 75%' } });
+      gsap.from('.faq-item', { opacity: 0, y: 15, duration: 0.3, stagger: 0.05, scrollTrigger: { trigger: '#faqList', start: 'top 80%' } });
 
       // CTA
-      gsap.from('#ctaContent', { opacity: 0, y: 60, duration: 0.8, scrollTrigger: { trigger: '#ctaContent', start: 'top 75%' } });
+      gsap.from('#ctaContent', { opacity: 0, y: 50, duration: 0.7, scrollTrigger: { trigger: '#ctaContent', start: 'top 75%' } });
     });
 
     // === CURSOR ===
-    const cursor = document.getElementById('cursor');
+    const cursor = document.getElementById('cursor-glow');
     document.addEventListener('mousemove', e => {
       cursor.style.left = e.clientX + 'px';
       cursor.style.top = e.clientY + 'px';
     });
 
-    // === Hero mockup parallax ===
-    document.querySelector('.mockup-frame')?.addEventListener('mousemove', e => {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-      if (window.innerWidth > 900) {
-        e.currentTarget.style.transform = `rotateY(${-8 + x * 4}deg) rotateX(${4 - y * 4}deg)`;
-      }
-    });
-    document.querySelector('.mockup-frame')?.addEventListener('mouseleave', e => {
-      if (window.innerWidth > 900) {
-        e.currentTarget.style.transform = 'rotateY(-8deg) rotateX(4deg)';
-      }
+    // === MOCKUP PARALLAX ===
+    const frame = document.getElementById('mockupFrame');
+    if(frame) {
+      frame.addEventListener('mousemove', e => {
+        if(window.innerWidth <= 900) return;
+        const r = frame.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        frame.style.transform = `rotateY(${-6 + x * 4}deg) rotateX(${3 - y * 4}deg)`;
+      });
+      frame.addEventListener('mouseleave', () => {
+        if(window.innerWidth > 900) frame.style.transform = 'rotateY(-6deg) rotateX(3deg)';
+      });
+    }
+
+    // === SMOOTH SCROLL ===
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const t = document.querySelector(a.getAttribute('href'));
+        if(t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      });
     });
   </script>
 </body>
