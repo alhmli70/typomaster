@@ -1,23 +1,35 @@
-<p align="center">
-  <img src="icon.svg" width="128" height="128" alt="TypoMaster Logo"/>
-</p>
+<div align="center">
+  <img src="banner.svg" width="100%" alt="TypoMaster Banner"/>
+</div>
 
-<h1 align="center">TypoMaster — أتقن الطباعة 🎯</h1>
+<br>
 
 <p align="center">
-  <strong>تطبيق سطح مكتب احترافي لتعليم وتحسين سرعة ودقة الطباعة</strong>
+  <strong>🚀 Professional typing trainer — أتقن الطباعة</strong>
   <br>
-  يدعم <strong>العربية</strong> و <strong>الإنجليزية</strong> مع 10 ثيمات — 5 ألعاب — 40 درساً — 210+ تمرين
+  تطوير مهارات الطباعة بالعربية والإنجليزية مع 5 ألعاب تفاعلية، 40 درساً، 210+ تمرين، وتحليلات أداء متقدمة
+  <br>
+  <sub>Best typing trainer for Arabic & English keyboards • AI-powered desktop app • Made with Tauri + React + Rust</sub>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/الإصدار-1.0.0-1E4A6E?style=for-the-badge&logo=tauri" alt="v1.0.0">
-  <img src="https://img.shields.io/badge/المنصة-Windows-0078D4?style=for-the-badge&logo=windows" alt="Windows">
-  <img src="https://img.shields.io/badge/Rust-2021-000000?style=for-the-badge&logo=rust" alt="Rust">
+  <a href="https://github.com/alhmli70/typomaster/stargazers">
+    <img src="https://img.shields.io/github/stars/alhmli70/typomaster?style=for-the-badge&logo=github&color=FFD700" alt="GitHub stars">
+  </a>
+  <a href="https://github.com/alhmli70/typomaster/releases">
+    <img src="https://img.shields.io/github/v/release/alhmli70/typomaster?style=for-the-badge&logo=tauri&color=FFC131" alt="GitHub release">
+  </a>
+  <a href="https://github.com/alhmli70/typomaster/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/alhmli70/typomaster?style=for-the-badge&color=2EA44F" alt="MIT License">
+  </a>
   <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react" alt="React 19">
   <img src="https://img.shields.io/badge/Tauri-v2-FFC131?style=for-the-badge&logo=tauri" alt="Tauri v2">
-  <img src="https://img.shields.io/badge/الترخيص-MIT-2EA44F?style=for-the-badge" alt="MIT">
-  <img src="https://img.shields.io/badge/build-MSI-844FBA?style=for-the-badge&logo=windows" alt="MSI">
+  <img src="https://img.shields.io/badge/Rust-2021-000000?style=for-the-badge&logo=rust" alt="Rust">
+  <img src="https://img.shields.io/badge/Windows-MSI-0078D4?style=for-the-badge&logo=windows" alt="MSI">
+  <br>
+  <img src="https://img.shields.io/github/last-commit/alhmli70/typomaster?style=for-the-badge&logo=github&color=blue" alt="last commit">
+  <img src="https://img.shields.io/github/repo-size/alhmli70/typomaster?style=for-the-badge&logo=github" alt="repo size">
+  <img src="https://img.shields.io/github/languages/count/alhmli70/typomaster?style=for-the-badge&logo=github" alt="languages">
 </p>
 
 <p align="center">
@@ -26,10 +38,10 @@
   <a href="#-التثبيت">التثبيت</a> •
   <a href="#-بناء-من-المصدر">بناء من المصدر</a> •
   <a href="#-الهندسة">الهندسة</a> •
-  <a href="#-قاعدة-البيانات">قاعدة البيانات</a> •
-  <a href="#-الألعاب">الألعاب</a> •
   <a href="#-الثيمات">الثيمات</a> •
-  <a href="#-التطوير">التطوير</a>
+  <a href="#-الألعاب">الألعاب</a> •
+  <a href="#-خريطة-الطريق">الخطة</a> •
+  <a href="RELEASE_NOTES.md">Release Notes</a>
 </p>
 
 ---
@@ -612,6 +624,16 @@ npx tauri build --bundles msi
 
 ---
 
+## ⭐ دعم المشروع
+
+إذا أعجبك المشروع، لا تنسَ وضع **⭐ Star** على GitHub — هذا يساعد الآخرين في اكتشافه!
+
+[![GitHub stars](https://img.shields.io/github/stars/alhmli70/typomaster?style=social)](https://github.com/alhmli70/typomaster/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/alhmli70/typomaster?style=social)](https://github.com/alhmli70/typomaster/network/members)
+[![GitHub watchers](https://img.shields.io/github/watchers/alhmli70/typomaster?style=social)](https://github.com/alhmli70/typomaster/watchers)
+
+---
+
 ## 📄 الترخيص
 
 هذا المشروع مرخص تحت **MIT License** — راجع ملف [LICENSE](LICENSE) للتفاصيل.
@@ -639,3 +661,12 @@ npx tauri build --bundles msi
   <br><br>
   <a href="#-الميزات">↑ العودة إلى الأعلى</a>
 </p>
+
+<!--
+كلمات مفتاحية لتحسين البحث:
+typing tutor, typing master, learn typing, typing speed, WPM, touch typing,
+Arabic typing, English typing, keyboard practice, typing exercises, typing games,
+Tauri app, desktop application, React typing app, typing trainer, typing lessons,
+best typing software, free typing tutor, typing speed test, typing analytics,
+Rust desktop app, SQLite typing app, Windows typing app, keyboard trainer
+-->
