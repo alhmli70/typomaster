@@ -64,29 +64,29 @@
       <td align="center"><b>واجهة الطباعة</b></td>
     </tr>
     <tr>
-      <td><img src="screenshots/dashboard.png" width="420" alt="Dashboard"></td>
-      <td><img src="screenshots/typing.png" width="420" alt="Typing Interface"></td>
+      <td><img src="img/dashboard.png" width="420" alt="Dashboard"></td>
+      <td><img src="img/exercises.png" width="420" alt="Typing Interface"></td>
     </tr>
     <tr>
       <td align="center"><b>اختيار التمارين</b></td>
       <td align="center"><b>الألعاب</b></td>
     </tr>
     <tr>
-      <td><img src="screenshots/exercises.png" width="420" alt="Exercises"></td>
-      <td><img src="screenshots/games.png" width="420" alt="Games"></td>
+      <td><img src="img/exercises.png" width="420" alt="Exercises"></td>
+      <td><img src="img/games.png" width="420" alt="Games"></td>
     </tr>
     <tr>
       <td align="center"><b>الدروس النظرية</b></td>
       <td align="center"><b>الإعدادات</b></td>
     </tr>
     <tr>
-      <td><img src="screenshots/lessons.png" width="420" alt="Lessons"></td>
-      <td><img src="screenshots/settings.png" width="420" alt="Settings"></td>
+      <td><img src="img/lessons.png" width="420" alt="Lessons"></td>
+      <td><img src="img/settings.png" width="420" alt="Settings"></td>
     </tr>
   </table>
 </p>
 
-> 💡 **ملاحظة:** أضف لقطات شاشة حقيقية في مجلد `screenshots/` لظهورها هنا.
+> 💡 **ملاحظة:** يتم تحديث لقطات الشاشة تلقائياً مع كل إصدار جديد.
 
 ---
 
