@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TypoMaster — Professional bilingual typing trainer built with React 19 + Tauri 2 + Rust. Master Arabic & English typing with 210+ exercises, 40 lessons, 5 games.">
+  <meta name="keywords" content="typing tutor, typing master, Arabic typing, English typing, touch typing, Tauri app, desktop application, React typing app, keyboard trainer">
+  <meta property="og:title" content="TypoMaster — Master Your Typing">
+  <meta property="og:description" content="Professional bilingual typing trainer. React 19 + Tauri 2 + Rust + SQLite. 210+ exercises, 40 lessons, 5 games.">
+  <meta property="og:image" content="https://raw.githubusercontent.com/alhmli70/typomaster/main/banner.svg">
+  <meta property="og:url" content="https://alhmli70.github.io/typomaster">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>TypoMaster — Master Your Typing</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='96' fill='%23FFC800'/><text x='256' y='320' font-family='Arial' font-size='320' font-weight='900' text-anchor='middle' fill='%230F111A'>T</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0A0E1A;
+      color: #E8EDF5;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    a { color: #4F8CFF; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+      background: radial-gradient(ellipse at 50% 0%, rgba(79,140,255,0.08) 0%, transparent 60%),
+                  radial-gradient(ellipse at 80% 80%, rgba(124,92,252,0.06) 0%, transparent 50%);
+    }
+    .hero-logo {
+      width: 80px; height: 80px;
+      background: linear-gradient(135deg, #4F8CFF, #7C5CFC);
+      border-radius: 18px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 42px; font-weight: 900; color: #fff;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 0 40px rgba(79,140,255,0.3);
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #E8EDF5 0%, #4F8CFF 50%, #7C5CFC 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+    .hero h1 span { -webkit-text-fill-color: transparent; }
+    .hero p {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: #8892B0;
+      max-width: 640px;
+      margin-bottom: 2rem;
+    }
+    .hero-sub {
+      font-size: 0.95rem;
+      color: #5B6A8A;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.25rem;
+      text-transform: uppercase;
+    }
+    .hero-badges {
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+      justify-content: center; margin-bottom: 2.5rem;
+    }
+    .hero-badges span {
+      padding: 0.35rem 0.9rem;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: rgba(26,33,64,0.8);
+      border: 1px solid rgba(79,140,255,0.15);
+      color: #8892B0;
+    }
+    .hero-badges span.highlight { color: #4F8CFF; border-color: rgba(79,140,255,0.3); }
+    .btn-group { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1.75rem;
+      border-radius: 10px;
+      font-size: 0.95rem; font-weight: 600;
+      transition: all 0.2s;
+      border: none; cursor: pointer;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #4F8CFF, #7C5CFC);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(79,140,255,0.25);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 30px rgba(79,140,255,0.35); }
+    .btn-secondary {
+      background: rgba(26,33,64,0.8);
+      color: #E8EDF5;
+      border: 1px solid rgba(79,140,255,0.15);
+    }
+    .btn-secondary:hover { background: rgba(26,33,64,1); border-color: rgba(79,140,255,0.3); transform: translateY(-2px); }
+    .btn-ghost {
+      background: transparent;
+      color: #8892B0;
+      border: 1px solid rgba(136,146,176,0.2);
+    }
+    .btn-ghost:hover { color: #E8EDF5; border-color: rgba(136,146,176,0.4); }
+
+    /* Screenshots */
+    .screenshots {
+      padding: 5rem 2rem;
+      background: #0D1225;
+    }
+    .screenshots h2 {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+    .screenshots .subtitle {
+      text-align: center;
+      color: #8892B0;
+      margin-bottom: 3rem;
+    }
+    .screenshot-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .screenshot-card {
+      background: rgba(26,33,64,0.6);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(79,140,255,0.08);
+      transition: all 0.3s;
+    }
+    .screenshot-card:hover { border-color: rgba(79,140,255,0.2); transform: translateY(-4px); }
+    .screenshot-card img {
+      width: 100%;
+      display: block;
+    }
+    .screenshot-card .label {
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      color: #8892B0;
+      font-weight: 500;
+    }
+
+    /* Features */
+    .features {
+      padding: 5rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .features h2 {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 3rem;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+    .feature-card {
+      background: rgba(26,33,64,0.6);
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid rgba(79,140,255,0.08);
+      transition: all 0.3s;
+      text-align: center;
+    }
+    .feature-card:hover { border-color: rgba(79,140,255,0.2); transform: translateY(-4px); }
+    .feature-card .icon { font-size: 2rem; margin-bottom: 0.75rem; }
+    .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .feature-card p { font-size: 0.85rem; color: #8892B0; }
+
+    /* Stats */
+    .stats {
+      padding: 4rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+    }
+    .stat-card {
+      background: rgba(26,33,64,0.6);
+      border-radius: 12px;
+      padding: 2rem 1rem;
+      text-align: center;
+      border: 1px solid rgba(79,140,255,0.08);
+    }
+    .stat-card .number {
+      font-size: 2.5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #4F8CFF, #7C5CFC);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-card .label { font-size: 0.8rem; color: #8892B0; margin-top: 0.25rem; letter-spacing: 0.05em; }
+
+    /* GitHub CTA */
+    .github-cta {
+      text-align: center;
+      padding: 5rem 2rem;
+      background: radial-gradient(ellipse at 50% 100%, rgba(79,140,255,0.06) 0%, transparent 60%);
+    }
+    .github-cta h2 { font-size: 1.75rem; font-weight: 800; margin-bottom: 1rem; }
+    .github-cta p { color: #8892B0; margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto; }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #5B6A8A;
+      font-size: 0.85rem;
+      border-top: 1px solid rgba(79,140,255,0.06);
+    }
+    footer a { color: #8892B0; }
+    footer a:hover { color: #4F8CFF; }
+
+    @media (max-width: 640px) {
+      .hero { padding: 4rem 1.5rem; }
+      .screenshot-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-logo">T</div>
+  <p class="hero-sub">Built with React 19 • Tauri 2 • Rust • SQLite</p>
+  <h1>TypoMaster</h1>
+  <p>Professional bilingual typing trainer — Master Arabic &amp; English typing with interactive lessons, games, and real-time analytics.</p>
+  <div class="hero-badges">
+    <span class="highlight">⌨️ 210+ Exercises</span>
+    <span class="highlight">📚 40 Lessons</span>
+    <span>🎮 5 Games</span>
+    <span>🎨 10 Themes</span>
+    <span>📊 Analytics</span>
+    <span>🤖 AI Tips</span>
+    <span>💽 SQLite</span>
+  </div>
+  <div class="btn-group">
+    <a href="https://github.com/alhmli70/typomaster/releases" class="btn btn-primary">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download
+    </a>
+    <a href="https://github.com/alhmli70/typomaster" class="btn btn-secondary">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+      Source Code
+    </a>
+    <a href="#screenshots" class="btn btn-ghost">Screenshots ↓</a>
+  </div>
+</section>
+
+<section class="screenshots" id="screenshots">
+  <h2>Screenshots</h2>
+  <p class="subtitle">A glimpse into the TypoMaster experience</p>
+  <div class="screenshot-grid">
+    <div class="screenshot-card">
+      <img src="../img/dashboard.png" alt="Dashboard" loading="lazy">
+      <div class="label">📊 Dashboard</div>
+    </div>
+    <div class="screenshot-card">
+      <img src="../img/lessons.png" alt="Lessons" loading="lazy">
+      <div class="label">📚 Lessons</div>
+    </div>
+    <div class="screenshot-card">
+      <img src="../img/exercises.png" alt="Exercises" loading="lazy">
+      <div class="label">⌨️ Exercises</div>
+    </div>
+    <div class="screenshot-card">
+      <img src="../img/games.png" alt="Games" loading="lazy">
+      <div class="label">🎮 Games</div>
+    </div>
+    <div class="screenshot-card">
+      <img src="../img/profile.png" alt="Profile" loading="lazy">
+      <div class="label">🏆 Profile</div>
+    </div>
+    <div class="screenshot-card">
+      <img src="../img/settings.png" alt="Settings" loading="lazy">
+      <div class="label">⚙️ Settings</div>
+    </div>
+  </div>
+</section>
+
+<section class="features">
+  <h2>Features</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="icon">📚</div>
+      <h3>40 Lessons</h3>
+      <p>20 Arabic + 20 English — from home row to speed mastery</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">⌨️</div>
+      <h3>210+ Exercises</h3>
+      <p>10 collections, 3 difficulty levels, progressive learning</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🎮</div>
+      <h3>5 Interactive Games</h3>
+      <p>Falling Words, Typer Shooter, Ninja Typer, Memory, Speed Race</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🎨</div>
+      <h3>10 Themes</h3>
+      <p>5 dark + 5 light premium themes with accent colors</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">📊</div>
+      <h3>Real-time Analytics</h3>
+      <p>WPM, accuracy, weekly charts, streaks, XP system</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🏆</div>
+      <h3>Achievements</h3>
+      <p>10+ achievements, XP levels, badges to unlock</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🎵</div>
+      <h3>Background Music</h3>
+      <p>10 MP3 tracks with full volume control</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">💽</div>
+      <h3>SQLite Database</h3>
+      <p>Persistent local storage — no data loss ever</p>
+    </div>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="number">15K+</div>
+      <div class="label">Lines of Code</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">210+</div>
+      <div class="label">Exercises</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">40</div>
+      <div class="label">Lessons</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">5</div>
+      <div class="label">Games</div>
+    </div>
+  </div>
+</section>
+
+<section class="github-cta">
+  <h2>⭐ Star on GitHub</h2>
+  <p>If you find TypoMaster useful, give it a star to help others discover it!</p>
+  <div class="btn-group">
+    <a href="https://github.com/alhmli70/typomaster" class="btn btn-primary">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/></svg>
+      Star on GitHub
+    </a>
+    <a href="https://github.com/alhmli70/typomaster/releases" class="btn btn-secondary">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download Latest
+    </a>
+  </div>
+</section>
+
+<footer>
+  <p>
+    Built with ❤️ using
+    <a href="https://tauri.app">Tauri</a> +
+    <a href="https://react.dev">React</a> +
+    <a href="https://www.rust-lang.org">Rust</a> +
+    <a href="https://sqlite.org">SQLite</a>
+  </p>
+  <p style="margin-top: 0.5rem;">
+    <a href="https://github.com/alhmli70/typomaster">GitHub</a> •
+    <a href="https://github.com/alhmli70/typomaster/releases">Releases</a> •
+    <a href="https://github.com/alhmli70/typomaster/blob/main/LICENSE">MIT License</a>
+  </p>
+</footer>
+
+</body>
+</html>

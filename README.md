@@ -2,47 +2,472 @@
   <img src="banner.svg" width="100%" alt="TypoMaster Banner"/>
 </div>
 
+<p align="center">
+  <a href="#english">🇬🇧 English</a> •
+  <a href="#arabic">🇸🇦 العربية</a> •
+  <a href="RELEASE_NOTES.md">📝 Release Notes</a>
+</p>
+
+---
+
+<a id="english"></a>
+
+<h1 align="center">⌨️ TypoMaster — Master Your Typing</h1>
+
+<p align="center">
+  <strong>Professional bilingual typing trainer</strong> — built with React 19 + Tauri 2 + Rust + SQLite.
+  <br>
+  210+ exercises • 40 lessons • 5 games • 10 themes • AI tips • Real-time analytics
+</p>
+
+<div align="center">
+
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Tauri](https://img.shields.io/badge/Tauri_2-FFC131?style=for-the-badge&logo=tauri&logoColor=black)
+![Rust](https://img.shields.io/badge/Rust_2021-000000?style=for-the-badge&logo=rust&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS_4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite_6-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+
+[![Stars](https://img.shields.io/github/stars/alhmli70/typomaster?style=for-the-badge&logo=github&label=Stars&color=FFD700)](https://github.com/alhmli70/typomaster/stargazers)
+[![Release](https://img.shields.io/github/v/release/alhmli70/typomaster?style=for-the-badge&logo=github&label=Release&color=2EA44F)](https://github.com/alhmli70/typomaster/releases)
+[![License](https://img.shields.io/github/license/alhmli70/typomaster?style=for-the-badge&label=License&color=blue)](LICENSE)
+[![Downloads](https://img.shields.io/github/downloads/alhmli70/typomaster/total?style=for-the-badge&logo=github&label=Downloads&color=purple)](https://github.com/alhmli70/typomaster/releases)
+[![Last Commit](https://img.shields.io/github/last-commit/alhmli70/typomaster?style=for-the-badge&logo=github&label=Updated&color=blue)](https://github.com/alhmli70/typomaster/commits/main)
+[![Repo Size](https://img.shields.io/github/repo-size/alhmli70/typomaster?style=for-the-badge&logo=github&label=Size&color=red)](https://github.com/alhmli70/typomaster)
+[![Languages](https://img.shields.io/github/languages/count/alhmli70/typomaster?style=for-the-badge&logo=github&label=Languages&color=orange)](https://github.com/alhmli70/typomaster)
+[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen?style=for-the-badge&logo=github)](/../../pulls)
+
+</div>
+
+---
+
+## ✨ Features
+
+<table>
+  <tr>
+    <td width="25%" align="center">
+      <strong>📚 40 Lessons</strong>
+      <br><small>20 Arabic + 20 English</small>
+    </td>
+    <td width="25%" align="center">
+      <strong>⌨️ 210+ Exercises</strong>
+      <br><small>3 levels • 10 collections</small>
+    </td>
+    <td width="25%" align="center">
+      <strong>🎮 5 Games</strong>
+      <br><small>Interactive & fun</small>
+    </td>
+    <td width="25%" align="center">
+      <strong>📊 Analytics</strong>
+      <br><small>WPM • Accuracy • XP</small>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <strong>🎨 10 Themes</strong>
+      <br><small>5 dark + 5 light</small>
+    </td>
+    <td align="center">
+      <strong>🎵 Background Music</strong>
+      <br><small>10 MP3 tracks</small>
+    </td>
+    <td align="center">
+      <strong>🏆 10+ Achievements</strong>
+      <br><small>XP & Levels</small>
+    </td>
+    <td align="center">
+      <strong>🤖 AI Tips</strong>
+      <br><small>Built-in, offline</small>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <strong>👆 Virtual Keyboard</strong>
+      <br><small>Arabic + English</small>
+    </td>
+    <td align="center">
+      <strong>💽 SQLite Local DB</strong>
+      <br><small>No data loss</small>
+    </td>
+    <td align="center">
+      <strong>🔒 Strict Mode</strong>
+      <br><small>No backspace</small>
+    </td>
+    <td align="center">
+      <strong>🌙 Dark/Light</strong>
+      <br><small>Instant toggle</small>
+    </td>
+  </tr>
+</table>
+
+---
+
+## 📸 Screenshots
+
+<p align="center">
+  <table>
+    <tr>
+      <td align="center"><b>Dashboard</b></td>
+      <td align="center"><b>Lessons</b></td>
+    </tr>
+    <tr>
+      <td><img src="img/dashboard.png" width="420" alt="Dashboard"></td>
+      <td><img src="img/lessons.png" width="420" alt="Lessons"></td>
+    </tr>
+    <tr>
+      <td align="center"><b>Exercises</b></td>
+      <td align="center"><b>Games</b></td>
+    </tr>
+    <tr>
+      <td><img src="img/exercises.png" width="420" alt="Exercises"></td>
+      <td><img src="img/games.png" width="420" alt="Games"></td>
+    </tr>
+    <tr>
+      <td align="center"><b>Profile</b></td>
+      <td align="center"><b>Settings</b></td>
+    </tr>
+    <tr>
+      <td><img src="img/profile.png" width="420" alt="Profile"></td>
+      <td><img src="img/settings.png" width="420" alt="Settings"></td>
+    </tr>
+  </table>
+</p>
+
+> 💡 Screenshots are updated with each release.
+
+---
+
+## 🚀 Tech Stack
+
+<div align="center">
+  <table>
+    <tr>
+      <th>Category</th>
+      <th>Technology</th>
+    </tr>
+    <tr><td><strong>Frontend</strong></td><td>React 19, TypeScript, Tailwind CSS 4, Motion, Lucide</td></tr>
+    <tr><td><strong>Backend</strong></td><td>Rust 2021, Tauri 2, Serde</td></tr>
+    <tr><td><strong>Database</strong></td><td>SQLite (rusqlite), sql.js (browser)</td></tr>
+    <tr><td><strong>Tooling</strong></td><td>Vite 6, Node.js 20+, npm 10+</td></tr>
+    <tr><td><strong>Build</strong></td><td>Windows MSI Installer, Portable EXE</td></tr>
+  </table>
+</div>
+
+---
+
+## 📦 Installation
+
+### Option 1 — MSI Installer (Recommended)
+
+```powershell
+# Download from Releases page
+# Run TypoMaster_1.0.0_x64_en-US.msi
+# Follow the setup wizard
+```
+
+### Option 2 — Portable EXE
+
+```powershell
+# Download TypoMaster_x64_portable.zip
+# Extract & run typomaster.exe
+```
+
+### Option 3 — Build from Source
+
+See [Building from Source](#-building-from-source).
+
+---
+
+## 🛠 Building from Source
+
+### Prerequisites
+
+| Tool | Version | Install |
+|------|---------|---------|
+| [Node.js](https://nodejs.org/) | ≥ 20 | `winget install OpenJS.NodeJS.LTS` |
+| [npm](https://www.npmjs.com/) | ≥ 10 | Comes with Node.js |
+| [Rust](https://www.rust-lang.org/) | ≥ 1.77 | `rustup install stable` |
+| [VS 2022 Build Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022) | 2022 | "Desktop development with C++" |
+| [Windows SDK](https://developer.microsoft.com/en-us/windows/downloads/windows-sdk/) | ≥ 10.0.19041 | Included with VS |
+
+### Build Commands
+
+```powershell
+git clone https://github.com/alhmli70/typomaster.git
+cd typomaster
+npm install
+npx tauri build --bundles msi
+```
+
+### Development Commands
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev:tauri` | Start Vite dev server on port 1420 |
+| `npx tauri dev` | Run Tauri + Vite (Hot Reload) |
+| `npm run build` | Build frontend only |
+| `npm run lint` | TypeScript check (`tsc --noEmit`) |
+
+### Build Outputs
+
+| File | Path |
+|------|------|
+| Desktop app (EXE) | `src-tauri/target/release/typomaster.exe` |
+| Windows Installer (MSI) | `src-tauri/target/release/bundle/msi/TypoMaster_1.0.0_x64_en-US.msi` |
+| Frontend bundle (Vite) | `dist/` |
+
+---
+
+## 🏗 Architecture
+
+```
+📦 TypoMaster
+├── 📂 src/                   # Frontend — React 19 + TypeScript
+│   ├── 📂 components/        # 25+ components
+│   ├── 📂 contexts/          # 4 React Contexts
+│   ├── 📂 database/          # Dual-mode DB layer
+│   ├── 📂 lib/               # Utilities
+│   └── 📂 data/              # 40 lessons data
+├── 📂 src-tauri/             # Backend — Rust + Tauri 2
+│   ├── 📂 src/               # 30 commands + SQLite
+│   └── 📄 Cargo.toml         # Rust dependencies
+├── 📂 public/music/          # 10 MP3 tracks
+├── 📄 icon.svg               # App icon
+├── 📄 vite.config.ts         # Vite config
+└── 📄 package.json           # npm dependencies
+```
+
+### Data Flow
+
+```
+┌──────────────────┐
+│  React Components │
+└────────┬─────────┘
+         │ invoke('command')
+┌────────▼─────────┐
+│  Rust Tauri Cmd  │
+└────────┬─────────┘
+         │
+┌────────▼─────────┐
+│    SQLite DB     │
+│  (AppData/*.db)  │
+└──────────────────┘
+```
+
+### Dual-Mode
+
+```typescript
+// The app automatically runs in two modes:
+if (window.__TAURI__) {
+  // 🖥️ Tauri mode: Rust commands → persistent SQLite
+} else {
+  // 🌐 Browser mode: localStorage + offline tips (testing)
+}
+```
+
+---
+
+## 🎮 Games
+
+| Game | Description | Goal |
+|------|-------------|------|
+| 🌊 **Falling Words** | Words fall from above — type before they hit the ground | Speed + Accuracy |
+| 🎯 **Typer Shooter** | Words appear randomly — snipe them before they vanish | Reflex + Focus |
+| 🥷 **Ninja Typer** | Letters jump and fade — type them in time | Reaction Speed |
+| 🧠 **Memory Typing** | Word appears then disappears — type from memory | Muscle Memory |
+| 🏎️ **Speed Race** | Race against time — type as many correct words as possible | Endurance + Speed |
+
+---
+
+## 🔑 Quick Start Guide
+
+### Beginner — First 10 Minutes
+1. **Launch the app** → Find TypoMaster in Start Menu
+2. **Choose your language** → Arabic or English from home screen
+3. **Learn basics** → Go to Lessons → Start with Lesson 1
+4. **Practice** → Exercises → Pick a collection
+5. **Have fun** → Try Falling Words in Games
+6. **Track progress** → Check Dashboard
+
+### Intermediate — Speed Improvement
+1. **Set WPM goal** → e.g., 40 WPM in Settings
+2. **Speed exercises** → Focus on speed collection
+3. **Enable Strict Mode** → Boost accuracy
+4. **Analyze errors** → Review stats after each session
+
+### Advanced — Mastery
+1. **Daily challenge** → Play Speed Race daily
+2. **Custom exercises** → Create your own via ExerciseManager
+3. **Maintain streak** → 30 days for "Perseverance Legend" achievement
+
+---
+
+## ⌨️ Keyboard Shortcuts
+
+| Shortcut | Action |
+|:--------:|--------|
+| `Ctrl + 1–9` | Navigate sidebar sections |
+| `Ctrl + D` | Dashboard |
+| `Ctrl + T` | Exercises |
+| `Ctrl + L` | Lessons |
+| `Ctrl + G` | Games |
+| `Ctrl + S` | Settings |
+| `Ctrl + M` | Toggle music |
+| `Esc` | Cancel / Back |
+| `Enter` | Finish exercise |
+| `Tab` | Skip word |
+| `Ctrl + Z` | Undo (normal mode) |
+
+---
+
+## ❓ FAQ
+
+### Music not working?
+Ensure `public/music/track-1.mp3` through `track-10.mp3` exist.
+
+### How to reset all data?
+**Settings → Advanced → Reset All Data**, or delete `%APPDATA%/com.typomaster.desktop/TypoMaster.db`.
+
+### App won't open after install?
+Install [WebView2 Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/).
+
+### Slow performance?
+- Reduce Glassmorphism in Settings → Appearance
+- Disable Keyboard Visualizer if not needed
+- Close heavy apps (WebView2 uses GPU)
+
+---
+
+## 🗺 Roadmap
+
+### v1.1 (Coming Soon)
+- macOS & Linux support
+- Daily Challenge
+- Export stats (CSV / PDF)
+- Per-finger analysis
+
+### v1.2 (Planned)
+- Multi-profile accounts
+- Community exercise marketplace
+- Deep Practice mode
+- Dvorak, Colemak support
+
+### v2.0 (Vision)
+- Competitive Multiplayer
+- HTML/CSS beginner interface
+- Course Builder
+- GitHub, Notion API integration
+
+---
+
+## 📊 Project Stats
+
+| Metric | Value |
+|--------|:-----:|
+| Total Code Lines | ~15,000+ |
+| TypeScript Files | 50+ |
+| Tauri Commands | 30 |
+| Database Tables | 7 |
+| React Components | 25+ |
+| Themes | 10 |
+| Interactive Games | 5 |
+| Lessons | 40 (20 ar + 20 en) |
+| Exercises | 210+ |
+| MSI Package Size | ~28 MB |
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow:
+
+1. **Fork** the repo
+2. Create branch: `git checkout -b feature/amazing-feature`
+3. Make changes
+4. Run `npm run lint` (no errors)
+5. Verify `npx tauri build` succeeds
+6. Open **Pull Request**
+
+### Guidelines
+- TypeScript for frontend — Rust for backend
+- Follow existing code style
+- Ensure RTL support for Arabic
+- Test in Tauri dev mode before submitting
+
+---
+
+## ⭐ Support
+
+If you like this project, please give it a ⭐ **Star** on GitHub — it helps others discover it!
+
+<div align="center">
+
+[![GitHub stars](https://img.shields.io/github/stars/alhmli70/typomaster?style=social)](https://github.com/alhmli70/typomaster/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/alhmli70/typomaster?style=social)](https://github.com/alhmli70/typomaster/network/members)
+[![GitHub watchers](https://img.shields.io/github/watchers/alhmli70/typomaster?style=social)](https://github.com/alhmli70/typomaster/watchers)
+
+</div>
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+| Technology | Usage |
+|------------|-------|
+| [Tauri](https://tauri.app/) | Desktop application framework |
+| [React](https://react.dev/) | UI library |
+| [Tailwind CSS](https://tailwindcss.com/) | Design system |
+| [SQLite](https://sqlite.org/) | Embedded database |
+| [Lucide](https://lucide.dev/) | Icons |
+| [Motion](https://motion.dev/) | Animations |
+| [Vite](https://vitejs.dev/) | Build tool |
+
+---
+
+<div align="center">
+  <br>
+  <a href="https://github.com/alhmli70/typomaster">
+    <img src="https://readme-typing-svg.herokuapp.com/?color=58A6FF&size=22&center=true&vCenter=true&width=600&lines=TypoMaster+%F0%9F%91%91+Master+Your+Typing;React+%2B+Tauri+%2B+Rust+%2B+SQLite;210%2B+Exercises+%E2%80%A2+40+Lessons+%E2%80%A2+5+Games;Star+this+repo+if+you+like+it!+%E2%AD%90" alt="Typing SVG" />
+  </a>
+  <br><br>
+  <sub>Built with ❤️ using Tauri + React + Rust</sub>
+  <br><br>
+  <a href="#english">↑ Back to top</a>
+</div>
+
+---
+
 <br>
 
-<p align="center">
-  <strong>🚀 Professional typing trainer — أتقن الطباعة</strong>
-  <br>
-  تطوير مهارات الطباعة بالعربية والإنجليزية مع 5 ألعاب تفاعلية، 40 درساً، 210+ تمرين، وتحليلات أداء متقدمة
-  <br>
-  <sub>Best typing trainer for Arabic & English keyboards • AI-powered desktop app • Made with Tauri + React + Rust</sub>
-</p>
+<a id="arabic"></a>
+
+<h1 align="center">⌨️ TypoMaster — أتقن الطباعة</h1>
 
 <p align="center">
-  <a href="https://github.com/alhmli70/typomaster/stargazers">
-    <img src="https://img.shields.io/github/stars/alhmli70/typomaster?style=for-the-badge&logo=github&color=FFD700" alt="GitHub stars">
-  </a>
-  <a href="https://github.com/alhmli70/typomaster/releases">
-    <img src="https://img.shields.io/github/v/release/alhmli70/typomaster?style=for-the-badge&logo=tauri&color=FFC131" alt="GitHub release">
-  </a>
-  <a href="https://github.com/alhmli70/typomaster/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/alhmli70/typomaster?style=for-the-badge&color=2EA44F" alt="MIT License">
-  </a>
-  <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react" alt="React 19">
-  <img src="https://img.shields.io/badge/Tauri-v2-FFC131?style=for-the-badge&logo=tauri" alt="Tauri v2">
-  <img src="https://img.shields.io/badge/Rust-2021-000000?style=for-the-badge&logo=rust" alt="Rust">
-  <img src="https://img.shields.io/badge/Windows-MSI-0078D4?style=for-the-badge&logo=windows" alt="MSI">
+  <strong>برنامج احترافي لتعليم الطباعة بالعربية والإنجليزية</strong>
   <br>
-  <img src="https://img.shields.io/github/last-commit/alhmli70/typomaster?style=for-the-badge&logo=github&color=blue" alt="last commit">
-  <img src="https://img.shields.io/github/repo-size/alhmli70/typomaster?style=for-the-badge&logo=github" alt="repo size">
-  <img src="https://img.shields.io/github/languages/count/alhmli70/typomaster?style=for-the-badge&logo=github" alt="languages">
+  مبني باستخدام React 19 + Tauri 2 + Rust + SQLite
 </p>
 
-<p align="center">
-  <a href="#-الميزات">الميزات</a> •
-  <a href="#-لقطات-الشاشة">لقطات الشاشة</a> •
-  <a href="#-التثبيت">التثبيت</a> •
-  <a href="#-بناء-من-المصدر">بناء من المصدر</a> •
-  <a href="#-الهندسة">الهندسة</a> •
-  <a href="#-الثيمات">الثيمات</a> •
-  <a href="#-الألعاب">الألعاب</a> •
-  <a href="#-خريطة-الطريق">الخطة</a> •
-  <a href="RELEASE_NOTES.md">Release Notes</a>
-</p>
+<div align="center">
+
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Tauri](https://img.shields.io/badge/Tauri_2-FFC131?style=for-the-badge&logo=tauri&logoColor=black)
+![Rust](https://img.shields.io/badge/Rust_2021-000000?style=for-the-badge&logo=rust&logoColor=white)
+
+[![Stars](https://img.shields.io/github/stars/alhmli70/typomaster?style=for-the-badge&logo=github&label=Stars&color=FFD700)](https://github.com/alhmli70/typomaster/stargazers)
+[![Release](https://img.shields.io/github/v/release/alhmli70/typomaster?style=for-the-badge&logo=github&label=Release&color=2EA44F)](https://github.com/alhmli70/typomaster/releases)
+
+</div>
 
 ---
 
@@ -98,8 +523,6 @@
   </table>
 </p>
 
-> 💡 **ملاحظة:** يتم تحديث لقطات الشاشة تلقائياً مع كل إصدار جديد.
-
 ---
 
 ## 📥 التثبيت
@@ -122,15 +545,7 @@
 
 ### الطريقة الثالثة — بناء من المصدر
 
-انظر قسم **[بناء من المصدر](#-بناء-من-المصدر)**.
-
-### المتطلبات للتشغيل
-
-| المتطلب | ملاحظة |
-|---------|--------|
-| Windows 10/11 | 64-bit |
-| [WebView2 Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/) | مضمّن في Windows 11 |
-| مساحة تخزين | ~50 MB |
+انظر قسم **[بناء من المصدر](#بناء-من-المصدر)**.
 
 ---
 
@@ -151,7 +566,6 @@
 ```powershell
 git clone https://github.com/alhmli70/typomaster.git
 cd typomaster
-
 npm install
 npx tauri build --bundles msi
 ```
@@ -164,7 +578,6 @@ npx tauri build --bundles msi
 | `npx tauri dev` | تشغيل Tauri + Vite (Hot Reload) |
 | `npm run build` | بناء الواجهة فقط |
 | `npm run lint` | فحص TypeScript |
-| `npx tauri icon icon.svg -o src-tauri/icons` | إنشاء الأيقونات |
 
 ### مخرجات البناء
 
@@ -198,30 +611,16 @@ npx tauri build --bundles msi
 │   │   ├── 📄 Logo.tsx                 شعار التطبيق (SVG)
 │   │   └── 📁 Games/                   5 ألعاب تفاعلية
 │   ├── 📂 contexts/                   # React Contexts
-│   │   ├── 📄 SettingsContext.tsx       حالة الإعدادات
-│   │   ├── 📄 SessionContext.tsx        حالة الجلسات والإحصائيات
-│   │   ├── 📄 ExerciseContext.tsx       حالة التمارين
-│   │   └── 📄 SoundContext.tsx          حالة الصوت والموسيقى
 │   ├── 📂 database/                   # طبقة قاعدة البيانات
-│   │   ├── 📄 db.ts                    كشف بيئة Tauri / متصفح
-│   │   ├── 📄 driver.ts                محرك قاعدة البيانات
-│   │   └── 📁 repositories/            4 مستودعات للبيانات
 │   ├── 📂 lib/                        # مكتبات مساعدة
-│   │   ├── 📄 musicEngine.ts           محرك الموسيقى (MP3)
-│   │   ├── 📄 soundEngine.ts           محرك المؤثرات الصوتية
-│   │   ├── 📄 stars.ts                 حساب النجوم
-│   │   └── 📄 offlineTips.ts           نصائح مدمجة
 │   └── 📂 data/                       # بيانات ثابتة
-│       └── 📄 lessonsData.tsx          محتوى 40 درساً + 400+ كلمة
 │
 ├── 📂 src-tauri/                     # Backend — Rust + Tauri v2
 │   ├── 📂 src/
 │   │   ├── 📄 main.rs                  نقطة الدخول
 │   │   └── 📄 lib.rs                   30 Tauri command + SQLite
 │   ├── 📄 Cargo.toml                  اعتماديات Rust
-│   ├── 📄 tauri.conf.json              إعدادات التطبيق
-│   └── 📂 capabilities/
-│       └── 📄 default.json             صلاحيات التطبيق
+│   └── 📄 tauri.conf.json              إعدادات التطبيق
 │
 ├── 📂 public/
 │   └── 📂 music/                      10 مقطوعات MP3
@@ -233,20 +632,20 @@ npx tauri build --bundles msi
 ### تدفق البيانات
 
 ```
-                   ┌──────────────────┐
-                   │  React Components │
-                   └────────┬─────────┘
-                            │
-                     invoke('command')
-                            │
-                   ┌────────▼─────────┐
-                   │  Rust Tauri Cmd  │
-                   └────────┬─────────┘
-                            │
-                   ┌────────▼─────────┐
-                   │    SQLite DB     │
-                   │  (AppData/*.db)  │
-                   └──────────────────┘
+                    ┌──────────────────┐
+                    │  React Components │
+                    └────────┬─────────┘
+                             │
+                      invoke('command')
+                             │
+                    ┌────────▼─────────┐
+                    │  Rust Tauri Cmd  │
+                    └────────┬─────────┘
+                             │
+                    ┌────────▼─────────┐
+                    │    SQLite DB     │
+                    │  (AppData/*.db)  │
+                    └──────────────────┘
 ```
 
 ### تقنية العرض المزدوج (Dual-Mode)
@@ -259,8 +658,6 @@ if (window.__TAURI__) {
   // 🌐 وضع المتصفح: localStorage + tips مدمجة (اختبار)
 }
 ```
-
-> **ملاحظة:** قاعدة البيانات في وضع Tauri مخزنة في `%APPDATA%/com.typomaster.desktop/TypoMaster.db`
 
 ---
 
@@ -326,32 +723,6 @@ reset_all_data_cmd     // إعادة تعيين الكل
 get_ai_tip             // نصيحة ذكية
 ```
 
-### هيكل SQL
-
-```sql
-CREATE TABLE exercises (
-  id         TEXT PRIMARY KEY,
-  title      TEXT NOT NULL,
-  content    TEXT NOT NULL,
-  language   TEXT NOT NULL DEFAULT 'en',
-  level      TEXT NOT NULL DEFAULT 'medium',
-  collection TEXT NOT NULL DEFAULT '',
-  "order"    INTEGER NOT NULL DEFAULT 0
-);
-
-CREATE TABLE typing_sessions (
-  id           INTEGER PRIMARY KEY AUTOINCREMENT,
-  exercise_id  TEXT,
-  wpm          REAL NOT NULL DEFAULT 0,
-  accuracy     REAL NOT NULL DEFAULT 0,
-  errors       INTEGER NOT NULL DEFAULT 0,
-  time_seconds REAL NOT NULL DEFAULT 0,
-  total_chars  INTEGER NOT NULL DEFAULT 0,
-  language     TEXT NOT NULL DEFAULT 'en',
-  created_at   TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
-);
-```
-
 ---
 
 ## 🎮 الألعاب
@@ -363,8 +734,6 @@ CREATE TABLE typing_sessions (
 | 🥷 **نينجا الحروف** | الحروف تقفز وتختفي — اكتبها في الوقت المحدد | سرعة رد الفعل |
 | 🧠 **ذاكرة الطباعة** | الكلمة تظهر ثم تختفي — اكتبها من الذاكرة | الذاكرة العضلية |
 | 🏎️ **سباق السرعة** | سباق مع الزمن — أكتب أكبر عدد من الكلمات الصحيحة | التحمل + السرعة |
-
-كل لعبة تسجل أعلى نتيجة في قاعدة البيانات. تستخدم التمارين الحقيقية من المنهج التعليمي.
 
 ---
 
@@ -389,8 +758,6 @@ CREATE TABLE typing_sessions (
 | `sky-light` | كحلي | `#F0F2F5` | `#1E4A6E` |
 | `mint-light` | زمردي | `#F0F5F0` | `#1B6B4A` |
 | `gray-light` | برقوقي | `#F2F0F5` | `#5C3D6E` |
-
-> في الثيمات الفاتحة، النصوص البيضاء تتحول تلقائياً إلى اللون الغامق المناسب للخلفية البيجية مع الحفاظ على تباين الأزرار.
 
 ---
 
@@ -436,24 +803,9 @@ CREATE TABLE typing_sessions (
 1. **شغّل التطبيق** → ابحث عن TypoMaster في قائمة ابدأ
 2. **اختر لغتك** → "عربي" أو "English" من الشاشة الرئيسية
 3. **ادرس الأساسيات** → اذهب إلى "الدروس" ← ابدأ بالدرس الأول
-4. **تدرب** → اذهب إلى "التمارين" ← اختر مجموعة `foundation-ar`
+4. **تدرب** → اذهب إلى "التمارين" ← اختر مجموعة
 5. **استمتع** → جرب "الكلمات المتساقطة" في قسم الألعاب
 6. **تابع تقدمك** → راجع لوحة التحكم
-
-### للمتوسطين — تحسين السرعة
-
-1. **حدد هدف WPM** → مثلاً 40 WPM في الإعدادات
-2. **تمارين السرعة** → ركز على مجموعة `speed-ar` أو `speed-en`
-3. **فعّل الوضع الصارم** → لتعزيز الدقة
-4. **حلل أخطاءك** → راجع إحصائياتك بعد كل جلسة
-5. **كرّر التمارين** → حسّن تصنيف النجوم (1–3)
-
-### للمتقدمين — الإتقان
-
-1. **تحدي يومي** → العب "سباق السرعة" يومياً
-2. **تمارين مخصصة** → أنشئ تمارينك الخاصة من ExerciseManager
-3. **حافظ على Streak** → 30 يوماً متتالياً لفتح إنجاز "أسطورة المثابرة"
-4. **حسّن نقاط ضعفك** → راجع الحروف التي تخطئ فيها أكثر
 
 ---
 
@@ -519,72 +871,35 @@ CREATE TABLE typing_sessions (
 }
 ```
 
-### إصدار نسخة جديدة
+---
 
-```powershell
-# 1. حدّث الإصدار في tauri.conf.json و package.json
-# 2. ابنِ النسخة النهائية
-npx tauri build --bundles msi
-# 3. اختبر الـ MSI على جهاز نظيف
-# 4. أنشئ GitHub Release
-```
+## 💖 دعم المشروع
 
-### اختبار الجودة
+إذا أعجبك المشروع، لا تنسَ وضع **⭐ Star** على GitHub — هذا يساعد الآخرين في اكتشافه!
 
-```powershell
-npm run lint     # فحص TypeScript
-cd src-tauri; cargo check  # فحص Rust
-```
+[![GitHub stars](https://img.shields.io/github/stars/alhmli70/typomaster?style=social)](https://github.com/alhmli70/typomaster/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/alhmli70/typomaster?style=social)](https://github.com/alhmli70/typomaster/network/members)
+[![GitHub watchers](https://img.shields.io/github/watchers/alhmli70/typomaster?style=social)](https://github.com/alhmli70/typomaster/watchers)
 
 ---
 
-## ❓ الأسئلة الشائعة
+## 📄 الترخيص
 
-### الموسيقى لا تعمل؟
-تأكد من وجود ملفات `public/music/track-1.mp3` إلى `track-10.mp3`.
-
-### كيف أعيد تعيين كل البيانات؟
-**الإعدادات ← متقدم ← إعادة تعيين كل البيانات**، أو احذف قاعدة البيانات من `%APPDATA%/com.typomaster.desktop/TypoMaster.db`.
-
-### التطبيق لا يفتح بعد التثبيت؟
-تأكد من تثبيت [WebView2 Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/).
-
-### مشكلة Cache بعد التحديث؟
-
-```powershell
-rd /s /q dist
-rd /s /q src-tauri\target
-cargo clean
-npm run build
-npx tauri build --bundles msi
-```
-
-### الأداء بطيء؟
-- قلل Glassmorphism في الإعدادات ← المظهر
-- عطّل Keyboard Visualizer إذا لم تكن بحاجته
-- أغلق التطبيقات الثقيلة (WebView2 يعتمد على GPU)
+هذا المشروع مرخص تحت **MIT License** — راجع ملف [LICENSE](LICENSE) للتفاصيل.
 
 ---
 
-## 📋 خريطة الطريق
+## 🙏 الشكر
 
-### الإصدار 1.1 (قريباً)
-- دعم macOS و Linux
-- تحدي يومي (Daily Challenge)
-- تصدير الإحصائيات (CSV / PDF)
-- إحصائيات لكل إصبع
-
-### الإصدار 1.2 (مخطط)
-- حسابات متعددة (Multi-profile)
-- متجر مجتمعي للتمارين
-- وضع التدريب العميق (Deep Practice)
-- دعم Dvorak, Colemak
-
-### الإصدار 2.0 (طموح)
-- Competitive Multiplayer
-- واجهة HTML/CSS للمبتدئين
-- Course Builder
-- تكامل مع GitHub, Notion APIs
+| التقنية | الاستخدام |
+|---------|-----------|
+| [Tauri](https://tauri.app/) | إطار تطبيقات سطح المكتب |
+| [React](https://react.dev/) | مكتبة الواجهات |
+| [Tailwind CSS](https://tailwindcss.com/) | نظام التصميم |
+| [SQLite](https://sqlite.org/) | قاعدة البيانات المدمجة |
+| [Lucide](https://lucide.dev/) | الأيقونات |
+| [Motion](https://motion.dev/) | الحركات التفاعلية |
+| [Vite](https://vitejs.dev/) | أداة البناء |
 
 ---
 
@@ -624,33 +939,13 @@ npx tauri build --bundles msi
 
 ---
 
-## ⭐ دعم المشروع
+## 📋 خريطة الطريق
 
-إذا أعجبك المشروع، لا تنسَ وضع **⭐ Star** على GitHub — هذا يساعد الآخرين في اكتشافه!
-
-[![GitHub stars](https://img.shields.io/github/stars/alhmli70/typomaster?style=social)](https://github.com/alhmli70/typomaster/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/alhmli70/typomaster?style=social)](https://github.com/alhmli70/typomaster/network/members)
-[![GitHub watchers](https://img.shields.io/github/watchers/alhmli70/typomaster?style=social)](https://github.com/alhmli70/typomaster/watchers)
-
----
-
-## 📄 الترخيص
-
-هذا المشروع مرخص تحت **MIT License** — راجع ملف [LICENSE](LICENSE) للتفاصيل.
-
----
-
-## 🙏 الشكر
-
-| التقنية | الاستخدام |
-|---------|-----------|
-| [Tauri](https://tauri.app/) | إطار تطبيقات سطح المكتب |
-| [React](https://react.dev/) | مكتبة الواجهات |
-| [Tailwind CSS](https://tailwindcss.com/) | نظام التصميم |
-| [SQLite](https://sqlite.org/) | قاعدة البيانات المدمجة |
-| [Lucide](https://lucide.dev/) | الأيقونات |
-| [Motion](https://motion.dev/) | الحركات التفاعلية |
-| [Vite](https://vitejs.dev/) | أداة البناء |
+| الإصدار | الميزات |
+|---------|---------|
+| **v1.1** (قريباً) | macOS & Linux • Daily Challenge • Export CSV/PDF • Per-finger stats |
+| **v1.2** (مخطط) | Multi-profile • Community marketplace • Deep Practice • Dvorak/Colemak |
+| **v2.0** (طموح) | Competitive Multiplayer • HTML/CSS interface • Course Builder • GitHub/Notion API |
 
 ---
 
@@ -659,14 +954,13 @@ npx tauri build --bundles msi
   <br>
   <sub>Built with ❤️ using Tauri + React + Rust</sub>
   <br><br>
-  <a href="#-الميزات">↑ العودة إلى الأعلى</a>
+  <a href="#english">↑ العودة إلى الأعلى</a>
 </p>
 
 <!--
-كلمات مفتاحية لتحسين البحث:
-typing tutor, typing master, learn typing, typing speed, WPM, touch typing,
-Arabic typing, English typing, keyboard practice, typing exercises, typing games,
-Tauri app, desktop application, React typing app, typing trainer, typing lessons,
-best typing software, free typing tutor, typing speed test, typing analytics,
-Rust desktop app, SQLite typing app, Windows typing app, keyboard trainer
+GitHub Topics Keywords:
+typing-tutor, typing-master, learn-typing, typing-speed, touch-typing,
+arabic-typing, english-typing, keyboard-practice, typing-exercises, typing-games,
+tauri-app, desktop-application, react-app, rust-app, sqlite-app,
+typing-trainer, typing-lessons, keyboard-trainer, windows-app, wpm
 -->
